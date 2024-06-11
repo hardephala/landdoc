@@ -1,4 +1,5 @@
 const User = require('../models/UserModel.js');
+const AdminRole = require('../models/AdminRole.js');
 
 // Custom middleware function to check user role (admin or normal user)
 const checkUserRole = async (req, res, next) => {
@@ -11,7 +12,8 @@ const checkUserRole = async (req, res, next) => {
       return res.status(404).json({ error: 'User not found' });
     }
 
-    if (user.role === 'admin') {
+    const roles = (await AdminRole.find()).map(role => role.role);
+    if (roles.includes(user.role)) {
       req.isAdmin = true;
     } else {
       req.isAdmin = false;

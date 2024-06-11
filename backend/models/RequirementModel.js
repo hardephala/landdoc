@@ -13,8 +13,12 @@ const requirementSchema = new mongoose.Schema({
   ],
   requiredSteps: [
     {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'RequiredStep',
+      from: String,
+      to: String,
+      role: {
+        type: String,
+        ref: 'AdminRoles',
+      }
     },
   ],
 });

@@ -8,7 +8,7 @@ const userSchema = new mongoose.Schema({
   },
   role: {
     type: String,
-    enum: ['user', 'admin','IntakeOfficer','SchemeOfficer','ExecutiveSecretary','Account','Legal','PermanentSecretary','Commissioner','Registry','Collection'],
+    // enum: ['user', 'admin','IntakeOfficer','SchemeOfficer','ExecutiveSecretary','Account','Legal','PermanentSecretary','Commissioner','Registry','Collection'],
     default: 'user',
   },
   applications: [
@@ -17,6 +17,8 @@ const userSchema = new mongoose.Schema({
       ref: 'Application',
     },
   ],
+}, {
+  timestamps: true
 });
 
 const User = mongoose.model('User', userSchema);

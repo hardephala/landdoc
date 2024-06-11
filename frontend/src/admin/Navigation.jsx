@@ -6,7 +6,7 @@ import customer1 from '../assets/admin/imgs/customer01.jpg'
 import '../assets/admin/vendor/bootstrap/css/bootstrap.min.css'
 import '../assets/admin/css/style.css'
 
-const Navigation = () => {
+const Navigation = ({ role }) => {
   
   const disconnectWallet = () => {
     window.location.reload();
@@ -39,14 +39,16 @@ const Navigation = () => {
             <span className="title">Applications</span>
           </Link>
         </li>
-        <li>
+        
+     {role === 'admin' && <li>
           <Link to="/settings">
             <span className="icon">
               <IonIcon icon="settings-outline"/>
             </span>
             <span className="title">Settings</span>
           </Link>
-        </li>
+        </li>}
+
         <li>
           <Link to="#" onClick={disconnectWallet}>
             <span className="icon">

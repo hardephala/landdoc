@@ -1,9 +1,11 @@
 import React, {useState, useEffect} from 'react'
 import axios from 'axios';
 import Modal from '../Modal';
+import {getAllRoles} from '../services/apis'
 
 import '../assets/admin/vendor/bootstrap/css/bootstrap.min.css'
 import '../assets/admin/css/style.css'
+
 
 const Settings = ({address}) => {
     const [applicationName, setApplicationName] = useState('');
@@ -20,6 +22,13 @@ const Settings = ({address}) => {
     const [requirements, setRequirements] = useState()
     const [admins, setAdmins] = useState()
     const [reason, setReason] = useState("Could not get application details");
+
+    const [roles, setRoles] = useState([]);
+    const defaultRoles = roles.filter(role => role.role !== 'admin');
+
+    console.log(defaultRoles)
+
+
 
 
     useEffect(() => {
@@ -45,9 +54,19 @@ const Settings = ({address}) => {
                 console.log(err)
             }
         }
+        
+    const getRoles  = async () => {
+        console.log('fetched ')
+        const roles = await getAllRoles(address)
+        console.log(roles)
+                setRoles(roles)
+                
+            }
         getApplicationReqs()
         getAdmins()
+        getRoles()
     }, [])
+
 
     const handleCreate = async () => {
         if (applicationName && (Object.keys(documents).length > 0)) {
@@ -180,6 +199,43 @@ const Settings = ({address}) => {
                             />
                             <button onClick={handleSaveDoc} className='btn btn-secondary input-lg form-control'>Add Document</button>
                         </div>
+
+                        <div className="form-group">
+                            <label><b>Add Status</b></label><br/>
+                            <label>Status From</label>
+                            <input
+                                type="text"
+                                placeholder="Pending"
+                                // value={document}
+                                // onChange={(e) => setDocument(e.target.value)}
+                                className="form-control input-md"
+                                required
+                                style={{marginBottom:"2px"}}
+                            />
+                            <label>Status To</label>
+                            <input
+                                type="text"
+                                placeholder="To"
+                                // value={document}
+                                // onChange={(e) => setDocument(e.target.value)}
+                                className="form-control input-md"
+                                required
+                                style={{marginBottom:"2px"}}
+                            />
+                            
+                            <select
+                            className="input-lg form-control"
+                            style={{
+                                cursor: 'pointer',
+                            }}
+                            defaultValue="Select Role"
+                            //onChange={(e) => setAdminRole(e.target.value)}
+                            >
+                                <option value="Select Role" disabled hidden>Select Role</option>
+                                { defaultRoles.map(role => <option key={role._id}>{role.role}</option>)}
+                            </select>
+                            <button onClick={handleSaveDoc} className='btn btn-secondary input-lg form-control'>Add Status Step</button>
+                        </div>
                         
                         { loading ? 
                             <button style={{cursor:"default"}} className='btn btn-warning form-control'>...loading</button>
@@ -229,15 +285,9 @@ const Settings = ({address}) => {
                             onChange={(e) => setAdminRole(e.target.value)}
                             >
                                 <option value="Select Role" disabled hidden>Select Role</option>
-                                <option>IntakeOfficer</option>
-                                <option>SchemeOfficer</option>
-                                <option>ExecutiveSecretary</option>
-                                <option>Account</option>
-                                <option>Legal</option>
-                                <option>PermanentSecretary</option>
-                                <option>Commissioner</option>
-                                <option>Registry</option>
-                                <option>Collection</option>
+                                {
+                                    defaultRoles.map(role => <option key={role._id}>{role.role}</option>)
+                                }
                             </select>
                             
                         </div>

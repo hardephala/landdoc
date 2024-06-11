@@ -50,8 +50,8 @@ const applicationSchema = new mongoose.Schema({
   //   default: 'Pending',
   // },
   status: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'RequiredStep',
+    type: String,
+    default: 'pending',
   },
   recordLog: [
     {

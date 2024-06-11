@@ -4,25 +4,17 @@ const RequiredStep = require('../models/ReqStepModel.js');
 
 const createRequirement = async (req, res) => {
   try {
-    const { applicationName, requiredDocuments, RequiredSteps } = req.body;
-
+    const { applicationName, requiredDocuments, requiredSteps } = req.body;
     const requiredDocumentsArray = Object.entries(requiredDocuments).map(([document, fee]) => ({
       document,
       fee,
     }));
 
-    const requiredStepsArray = Object.entries(RequiredSteps).map(([requirement,steporder,stepstatus,userprofile]) => ({
-      requirement,steporder,stepstatus,userprofile
-    }));
-
     const createdDocuments = await RequiredDocument.create(requiredDocumentsArray);
-
-    const createdSteps = await RequiredStep.create(requiredStepsArray);
-
     const requirement = new Requirement({
       applicationName,
       requiredDocuments: createdDocuments.map(doc => doc._id),
-      requiredSteps: createdSteps.map(stepstatus => stepstatus.requirement)
+      requiredSteps,
     });
 
     await requirement.save();

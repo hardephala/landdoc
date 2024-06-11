@@ -97,6 +97,11 @@ function App() {
 
   const checkDBForUser = async (address) => {
     try {
+
+      const { data: rolesData } = await axios.get(`http://localhost:4000/api/admin/roles/`, { address },)
+
+      const roles = rolesData.data.map(role => role.role)
+      console.log(roles)
       console.log(address)
       const results = await axios.post(
         `http://localhost:4000/api/check-user`,
@@ -106,7 +111,7 @@ function App() {
       setApplications(results.data.applications);
       setUserRole(results.data.role);
       console.log(results.data.role)
-      if(results.data.role === "admin") {
+      if(roles.includes(results.data.role)) {
         try {
           const results = await axios.post(
             `http://localhost:4000/api/applications/admin`,
@@ -386,7 +391,7 @@ function App() {
       return (
         <div className="container-fluid">
           <div className="main">
-            <Navigation />
+            <Navigation role={userRole} />
 
             <Routes>
                 <Route path="/" element={<Recent address={userAddress} />} />

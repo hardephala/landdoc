@@ -5,18 +5,15 @@ const reqstepSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Requirement',
   },
-  steporderno: {
-    type: Number
-  },
-  stepstatus: {
-    type: String
-  },
-  userprofile: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'User',
+  from: String,
+  to: String,
+  role: {
+    type: String,
+    ref: 'AdminRoles',
     required: true,
   }
 });
+
 
 const RequiredStep = mongoose.model('RequiredStep', reqstepSchema);
 
