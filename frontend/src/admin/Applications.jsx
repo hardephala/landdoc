@@ -46,8 +46,38 @@ const Applications = ({address}) => {
     <>
         <div class="container">
             <div class="row">
+            <div style={{height:"50px"}}></div>
+                <div class=" col-lg-12">
+                    <div class="cardHeader">
+                        <h2>Applications</h2>
+                        <p></p>
+                    </div>
+                    <table class="table table-striped table-hover table-bordered" style={{width: "100%"}}>
+                        <thead>
+                            <tr>
+                                <td>Application ID</td>
+                                <td>Applicant Address</td>
+                                <td>Application Type</td>
+                                <td>Status</td>
+                                <td>Action</td>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {allApplications?.Pending.applications.map((application, index) => (
+                                <tr>
+                                    <td>{application?._id}</td>
+                                    <td>{application?.userId?.address?.substring(0, 5)}...{application?.userId?.address?.slice(-3)}</td>
+                                    <td>{application.appType.applicationName}</td>
+                                    <td><span className="status pending">{application.status}</span></td>
+                                    <td><Link to={`/application/${application._id}`}>View Info</Link> / <Link onClick={() => handleDownload(application.appType.applicationName, application._id, application?.userId?.address, "Paid")}>Print</Link></td>
+                                </tr>
+                            ))}
+
+                        </tbody>
+                    </table>
+                </div>
             
-                <div style={{height:"50px"}}></div>
+                {/* <div style={{height:"50px"}}></div>
                 <div class=" col-lg-12">
                     <div class="cardHeader">
                         <h2>Pending Applications</h2>
@@ -113,8 +143,6 @@ const Applications = ({address}) => {
                     </table>
                 </div>
 
-
-
                 <div style={{height:"30px"}}></div>
                 <div class=" col-lg-12">
                     <div class="cardHeader">
@@ -148,7 +176,6 @@ const Applications = ({address}) => {
                     </table>
                 </div>
 
-
                 <div style={{height:"30px"}}></div>
                 <div class=" col-lg-12">
                     <div class="cardHeader">
@@ -179,7 +206,7 @@ const Applications = ({address}) => {
                             ))}
                         </tbody>
                     </table>
-                </div>
+                </div> */}
             </div>
         </div>
     </>

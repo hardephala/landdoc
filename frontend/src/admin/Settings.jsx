@@ -202,6 +202,16 @@ const Settings = ({address}) => {
 
                         <div className="form-group">
                             <label><b>Add Status</b></label><br/>
+                            <select
+                            className="input-lg form-control"
+                            style={{
+                                cursor: 'pointer',
+                            }}
+                            defaultValue="Select Role"
+                            >
+                                <option value="Select Role" disabled hidden>Select Role</option>
+                                { defaultRoles.map(role => <option key={role._id}>{role.role}</option>)}
+                            </select>
                             <label>Status From</label>
                             <input
                                 type="text"
@@ -223,18 +233,8 @@ const Settings = ({address}) => {
                                 style={{marginBottom:"2px"}}
                             />
                             
-                            <select
-                            className="input-lg form-control"
-                            style={{
-                                cursor: 'pointer',
-                            }}
-                            defaultValue="Select Role"
-                            //onChange={(e) => setAdminRole(e.target.value)}
-                            >
-                                <option value="Select Role" disabled hidden>Select Role</option>
-                                { defaultRoles.map(role => <option key={role._id}>{role.role}</option>)}
-                            </select>
-                            <button onClick={handleSaveDoc} className='btn btn-secondary input-lg form-control'>Add Status Step</button>
+                            {/* Button Action to Add Status Step */}
+                            <button  className='btn btn-secondary input-lg form-control'>Add Status Step</button>
                         </div>
                         
                         { loading ? 
@@ -258,7 +258,6 @@ const Settings = ({address}) => {
                     </div>
                     
                     <br/><br/>
-
 
                     <div className="cardHeader">
                         <h2>Add an admin</h2>
@@ -295,6 +294,32 @@ const Settings = ({address}) => {
                             <button style={{cursor:"default"}} className='btn btn-warning form-control'>...loading</button>
                             :
                             <button onClick={handleAddAdmin} className='btn btn-primary form-control'>Add admin</button>
+                        }
+                    </div>
+                    
+                    <br></br>
+                    
+                    <div className="cardHeader">
+                        <h2>Create User Role</h2>
+                    </div>
+                    <div className="form-container">
+                        <div className="form-group">
+                            <label>Admin Role</label>
+                            <input
+                                type="text"
+                                placeholder="Enter Admin Role"
+                                //value={adminAddress}
+                                //onChange={(e) => setAdminAddress(e.target.value)}
+                                className="form-control input-lg"
+                                required
+                            />
+
+                            
+                        </div>
+                        { adminLoading ? 
+                            <button style={{cursor:"default"}} className='btn btn-warning form-control'>...loading</button>
+                            :
+                            <button className='btn btn-primary form-control'>Add Role</button>
                         }
                     </div>
                 </div>

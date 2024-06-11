@@ -485,50 +485,15 @@ function App() {
                 <div className="php-email-form">
                   <div className="row">
                     <div className="form-group col-md-6">
-                      <label htmlFor="name">Owner's full name</label>
-                      <input type="text" name="name" onChange={(e)=>setOwnerFullName(e.target.value)} className="form-control" id="name" required />
+                      <label htmlFor="name">Full name</label>
+                      <input type="text" name="name"  className="form-control" id="name" required />
                     </div>
                     <div className="form-group col-md-6 mt-3 mt-md-0">
-                      <label htmlFor="address">Owner's address</label>
-                      <input type="text" onChange={(e)=>setOwnerAddress(e.target.value)} className="form-control" name="address" id="address" required />
+                      <label htmlFor="address">Email address</label>
+                      <input type="text" className="form-control" name="address" id="address" required />
                     </div>
                   </div>
-                  <div className="row">
-                    <div className="form-group col-md-6">
-                      <label htmlFor="ownerType">Previous owner type</label>
-                      <input type="text" onChange={(e)=>setPrevOwnerType(e.target.value)} name="ownerType" className="form-control" id="ownerType" required />
-                    </div>
-                    <div className="form-group col-md-6 mt-3 mt-md-0">
-                      <label htmlFor="developed">Developed</label>
-                      <select className="form-control" name="developed" id="developed" onChange={(e)=>setDeveloped(e.target.value)} required>
-                        <option value="true">Yes</option>
-                        <option value="false">No</option>
-                      </select>
-                    </div>
-                  </div>
-                  <div className="row">
-                    <div className="form-group col-md-6">
-                      <label htmlFor="name">Occupied</label>
-                      <select className="form-control" name="developed" id="occupied" onChange={(e)=>setOccupied(e.target.value)} required>
-                        <option value="true">Yes</option>
-                        <option value="false">No</option>
-                      </select>
-                    </div>
-                    <div className="form-group col-md-6 mt-3 mt-md-0">
-                      <label htmlFor="residentType">Resident type</label>
-                      <input type="text" onChange={(e)=>setResidentType(e.target.value)} className="form-control" name="residentType" id="residentType" required />
-                    </div>
-                  </div>
-                  <div className="row">
-                    <div className="form-group col-md-6">
-                      <label htmlFor="size">Size (Sqm)</label>
-                      <input type="number" onChange={(e)=>setSizeSqm(e.target.value)} name="size" className="form-control" id="size" required />
-                    </div>
-                  </div>
-                  <div className="form-group mt-3">
-                    <label htmlFor="location">Location</label>
-                    <input type="text" onChange={(e)=>setLocation(e.target.value)} className="form-control" name="location" id="location" required />
-                  </div>
+
 
                   <div className="form-group mt-3">
                     <select
@@ -603,7 +568,7 @@ function App() {
             &copy; Copyright <strong><span>Scaffold</span></strong>. All Rights Reserved
           </div>
           <div className="credits">
-            Designed by <a href="#">Mrs Beautiful Lady</a>
+            Designed by <a href="#">Tolu</a>
           </div>
         </div>
       </footer>

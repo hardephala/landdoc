@@ -79,9 +79,8 @@ const Apps = ({address, setShowApps}) => {
                             <tr>
                                 <td>Application ID</td>
                                 <td>Application Type</td>
-                                <td>Payment Status</td>
                                 <td>Status</td>
-                                <td>Action</td>
+                                <td>Comments</td>
                             </tr>
                         </thead>
                         <tbody>
@@ -89,7 +88,6 @@ const Apps = ({address, setShowApps}) => {
                                 <tr>
                                     <td>{application?._id}</td>
                                     <td>{application?.appType?.applicationName}</td>
-                                    <td>Paid</td>
                                     <td><span className="status pending">{application?.status}</span></td>
                                     <td><Link onClick={() => handleViewInfo(application)}>View Info</Link> / <Link onClick={() => handleDownload(application.appType.applicationName, application._id, application?.userId?.address, "Paid")}>Print</Link></td>
                                 </tr>
