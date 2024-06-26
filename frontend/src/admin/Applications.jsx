@@ -1,3 +1,5 @@
+/* eslint-disable react/jsx-key */
+/* eslint-disable react/prop-types */
 import React, { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import jsPDF from 'jspdf';
@@ -28,31 +30,31 @@ const Applications = ({address}) => {
         const fetchData = async () => {
             try {
                 const results = await axios.post(
-                  `http://localhost:4000/api/applications/admin`,
-                  { address },
-                  {}
+                    `http://localhost:4000/api/applications/admin`,
+                    { address },
+                    {}
                 );
                 setAllApplications(results.data);
                 console.log(results.data)
-              } catch (err) {
+            } catch (err) {
                 console.log(err)
-              }
+            }
         };
     
         fetchData();
-    }, []);
+    }, [address]);
     
   return (
     <>
-        <div class="container">
-            <div class="row">
+        <div className="container">
+            <div className="row">
             <div style={{height:"50px"}}></div>
-                <div class=" col-lg-12">
-                    <div class="cardHeader">
+                <div className=" col-lg-12">
+                    <div className="cardHeader">
                         <h2>Applications</h2>
                         <p></p>
                     </div>
-                    <table class="table table-striped table-hover table-bordered" style={{width: "100%"}}>
+                    <table className="table table-striped table-hover table-bordered" style={{width: "100%"}}>
                         <thead>
                             <tr>
                                 <td>Application ID</td>
@@ -68,8 +70,9 @@ const Applications = ({address}) => {
                                     <td>{application?._id}</td>
                                     <td>{application?.userId?.address?.substring(0, 5)}...{application?.userId?.address?.slice(-3)}</td>
                                     <td>{application.appType.applicationName}</td>
-                                    <td><span className="status pending">{application.status}</span></td>
+                                    <td><span className="status pending">{application.status}??Can details be populated here</span></td>
                                     <td><Link to={`/application/${application._id}`}>View Info</Link> / <Link onClick={() => handleDownload(application.appType.applicationName, application._id, application?.userId?.address, "Paid")}>Print</Link></td>
+                                    {/* Code to view each applicaitons detail */}
                                 </tr>
                             ))}
 

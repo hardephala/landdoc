@@ -40,14 +40,15 @@ const Navigation = ({ role }) => {
           </Link>
         </li>
         
-     {role === 'admin' && <li>
+        {role === 'admin' && <li>
           <Link to="/settings">
             <span className="icon">
               <IonIcon icon="settings-outline"/>
             </span>
             <span className="title">Settings</span>
           </Link>
-        </li>}
+        </li>
+        }
 
         <li>
           <Link to="#" onClick={disconnectWallet}>
