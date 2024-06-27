@@ -1,25 +1,26 @@
-import React, { useState, useEffect } from 'react'
-import { useNavigate, useParams } from 'react-router-dom';
-import axios from 'axios';
-import { ethers } from 'ethers';
+/* eslint-disable react/no-unescaped-entities */
+import React, { useState, useEffect } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import axios from "axios";
+import { ethers } from "ethers";
 
-import customer1 from '../assets/admin/imgs/customer01.jpg'
-import '../assets/admin/vendor/bootstrap/css/bootstrap.min.css'
-import '../assets/admin/css/style.css'
+import customer1 from "../assets/admin/imgs/customer01.jpg";
+import "../assets/admin/vendor/bootstrap/css/bootstrap.min.css";
+import "../assets/admin/css/style.css";
 
 const Application = ({ address, contract }) => {
   const { applicationId } = useParams();
   const [application, setApplication] = useState();
   const [logs, setLogs] = useState([]);
-  const [status, setStatus] = useState('');
+  const [status, setStatus] = useState("");
   const [documentStatuses, setDocumentStatuses] = useState({});
-  const [comments, setComments] = useState('');
+  const [comments, setComments] = useState("");
 
-  const [completedDocument, setCompletedDocument] = useState('');
-  const [completedDocURL, setCompletedDocURL] = useState('');
+  const [completedDocument, setCompletedDocument] = useState("");
+  const [completedDocURL, setCompletedDocURL] = useState("");
   const [transactionDetails, setTransactionDetails] = useState({});
   const [showTransactionDetails, setShowTransactionDetails] = useState(false);
-  
+
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -33,22 +34,25 @@ const Application = ({ address, contract }) => {
         setApplication(results.data.application);
 
         const options = {
-          year: 'numeric',
-          month: 'long',
-          day: 'numeric',
-          hour: 'numeric',
-          minute: 'numeric',
-          second: 'numeric',
+          year: "numeric",
+          month: "long",
+          day: "numeric",
+          hour: "numeric",
+          minute: "numeric",
+          second: "numeric",
           hour12: false,
         };
-        const logsWithISOStrings = results.data.logs.map(log => {
-          const isoDateString = new Date(log.date).toLocaleDateString(undefined, options);
-          console.log(isoDateString)
+        const logsWithISOStrings = results.data.logs.map((log) => {
+          const isoDateString = new Date(log.date).toLocaleDateString(
+            undefined,
+            options
+          );
+          console.log(isoDateString);
           return { ...log, date: isoDateString };
         });
-        setLogs(logsWithISOStrings)
-  
-        setStatus(results.data.application.status)
+        setLogs(logsWithISOStrings);
+
+        setStatus(results.data.application.status);
         const initialDocumentStatuses = {};
         results.data.application.documents.forEach((document) => {
           initialDocumentStatuses[document._id] = document.status;
@@ -58,62 +62,60 @@ const Application = ({ address, contract }) => {
         console.log(err);
       }
     };
-  
+
     fetchData();
   }, [applicationId]);
-
 
   const storeHashOnChain = async (id, hash) => {
     try {
       const tx = await contract.storeHash(id, hash);
 
-      console.log('Transaction Hash:', tx.hash);
+      console.log("Transaction Hash:", tx.hash);
 
       await tx.wait();
 
       const retrievedHash = await contract.getHashByIdentifier(id);
 
-      console.log('Stored hash:', retrievedHash);
-      setTransactionDetails({ transactionHash: tx.hash, storedURL: retrievedHash })
+      console.log("Stored hash:", retrievedHash);
+      setTransactionDetails({
+        transactionHash: tx.hash,
+        storedURL: retrievedHash,
+      });
       setShowTransactionDetails(true);
       return { transactionHash: tx.hash, storedURL: retrievedHash };
     } catch (error) {
-      console.error('Error storing hash on chain:', error);
+      console.error("Error storing hash on chain:", error);
       throw error;
     }
   };
 
-
-
-
   const handleUpdateStatus = async () => {
     try {
-        if (status === 'Completed') {
-          storeHashOnChain(completedDocURL.hash, completedDocURL.url)
-          
-          await axios.put(
-            `http://localhost:4000/api/applications/completed/${applicationId}`,
-            { address, completedDocURL },
-            {}
-          );
-        }
+      if (status === "Completed") {
+        storeHashOnChain(completedDocURL.hash, completedDocURL.url);
 
         await axios.put(
-            `http://localhost:4000/api/applications/status/${applicationId}`,
-            { status, comments, address },
+          `http://localhost:4000/api/applications/completed/${applicationId}`,
+          { address, completedDocURL },
+          {}
+        );
+      }
+
+      await axios.put(
+        `http://localhost:4000/api/applications/status/${applicationId}`,
+        { status, comments, address },
+        {}
+      );
+
+      await Promise.all(
+        Object.entries(documentStatuses).map(([documentId, documentStatus]) =>
+          axios.put(
+            `http://localhost:4000/api/documents/${documentId}/status`,
+            { status: documentStatus },
             {}
-        );
-        
-        await Promise.all(
-            Object.entries(documentStatuses).map(([documentId, documentStatus]) =>
-            axios.put(
-                `http://localhost:4000/api/documents/${documentId}/status`,
-                { status: documentStatus },
-                {}
-            )
-            )
-        );
-        
+          )
+        )
+      );
     } catch (err) {
       console.log(err);
     }
@@ -121,7 +123,7 @@ const Application = ({ address, contract }) => {
 
   const handleClosePopup = () => {
     setShowTransactionDetails(false);
-    navigate('/applications');
+    navigate("/applications");
   };
 
   const handleDocumentStatusChange = (documentId, newStatus) => {
@@ -134,16 +136,16 @@ const Application = ({ address, contract }) => {
   const handleDocumentUpload = async (applicationName) => {
     try {
       const formData = new FormData();
-      formData.append('status', 'Completed');
-      formData.append('documentName', applicationName);
-      formData.append('file', completedDocument);
+      formData.append("status", "Completed");
+      formData.append("documentName", applicationName);
+      formData.append("file", completedDocument);
 
       const results = await axios.post(
-        'http://localhost:4000/api/upload',
+        "http://localhost:4000/api/upload",
         formData,
         {
           headers: {
-            'Content-Type': 'multipart/form-data',
+            "Content-Type": "multipart/form-data",
           },
         }
       );
@@ -157,32 +159,57 @@ const Application = ({ address, contract }) => {
   return (
     <>
       <div className="container">
-        <div style={{ marginTop: '40px' }}></div>
-        <h3><strong>{application?.appType?.applicationName}</strong></h3><br/>
+        <div style={{ marginTop: "40px" }}></div>
+        <h3>
+          <strong>{application?.appType?.applicationName}</strong>
+        </h3>
+        <br />
         <div className="row">
           <div className="col-md-6">
-            <p><strong>Owner's Full Name :</strong> {application?.ownerFullName}</p>
-            <p><strong>Owner's Address :</strong> {application?.ownerAddress}</p>
-            <p><strong>Previous Owner Type :</strong> {application?.prevOwnerType}</p>
-            <p><strong>Developed :</strong> {application?.developed ? 'Yes' : 'No'}</p>
+            <p>
+              <strong>Owner's Full Name :</strong> {application?.ownerFullName}
+            </p>
+            <p>
+              <strong>Owner's Address :</strong> {application?.ownerAddress}
+            </p>
+            <p>
+              <strong>Previous Owner Type :</strong>{" "}
+              {application?.prevOwnerType}
+            </p>
+            <p>
+              <strong>Developed :</strong>{" "}
+              {application?.developed ? "Yes" : "No"}
+            </p>
           </div>
           <div className="col-md-6">
-            <p><strong>Resident Type :</strong> {application?.residentType}</p>
-            <p><strong>Size (Sqm) :</strong> {application?.sizeSqm}</p>
-            <p><strong>Location :</strong> {application?.location}</p>
-            <p><strong>Occupied :</strong> {application?.occupied ? 'Yes' : 'No'}</p>
+            <p>
+              <strong>Resident Type :</strong> {application?.residentType}
+            </p>
+            <p>
+              <strong>Size (Sqm) :</strong> {application?.sizeSqm}
+            </p>
+            <p>
+              <strong>Location :</strong> {application?.location}
+            </p>
+            <p>
+              <strong>Occupied :</strong> {application?.occupied ? "Yes" : "No"}
+            </p>
           </div>
-            <label>
+          <label>
             <strong>Application status :</strong> {application?.status}
-              <select value={status} onChange={(e) => setStatus(e.target.value)} className='col-md-3 form-control'>
-                <option value="Pending">Pending</option>
-                <option value="Approved">Approved</option>
-                <option value="ActionNeeded">Action Needed</option>
-                <option value="Completed">Completed</option>
-              </select>
-            </label>
-            <br />
-            {status === 'Completed' && (
+            <select
+              value={status}
+              onChange={(e) => setStatus(e.target.value)}
+              className="col-md-3 form-control"
+            >
+              <option value="Pending">Pending</option>
+              <option value="Approved">Approved</option>
+              <option value="ActionNeeded">Action Needed</option>
+              <option value="Completed">Completed</option>
+            </select>
+          </label>
+          <br />
+          {status === "Completed" && (
             <label>
               <strong>Completed Document : </strong>
               <input
@@ -191,71 +218,92 @@ const Application = ({ address, contract }) => {
               />
               <button
                 type="button"
-                className='btn btn-secondary'
-                onClick={() => handleDocumentUpload(application?.appType?.applicationName)}
+                className="btn btn-secondary"
+                onClick={() =>
+                  handleDocumentUpload(application?.appType?.applicationName)
+                }
               >
                 Upload
               </button>
             </label>
-            )}
-            { application?.completedDocURL && (
-              <div className="col-md-6">
-                {`Completed ${application?.appType?.applicationName} Document`} :{' '}
-                <a href={`http://localhost:4000/${application?.completedDocURL}`} target="_blank" rel="noopener noreferrer">
+          )}
+          {application?.completedDocURL && (
+            <div className="col-md-6">
+              {`Completed ${application?.appType?.applicationName} Document`} :{" "}
+              <a
+                href={`http://localhost:4000/${application?.completedDocURL}`}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
                 View in new tab
-                </a>
-              </div>
-            )}
-            <br />
-            <br />
-            <br />
-            <label>
-                <strong>Comments : </strong>
-                <textarea
-                    value={comments}
-                    onChange={(e) => setComments(e.target.value)}
-                    className='form-control'
-                />
-            </label>
+              </a>
+            </div>
+          )}
+          <br />
+          <br />
+          <br />
+          <label>
+            <strong>Comments : </strong>
+            <textarea
+              value={comments}
+              onChange={(e) => setComments(e.target.value)}
+              className="form-control"
+            />
+          </label>
 
-          <p><strong>Document Files : </strong></p>
-            <ul>
+          <p>
+            <strong>Document Files : </strong>
+          </p>
+          <ul>
             {application?.documents?.map((file) => (
-                <div key={file._id}>
-                    <div className="col-md-6">
-                        {file.document} :{' '}
-                        <a href={`http://localhost:4000/${file.url}`} target="_blank" rel="noopener noreferrer">
-                        View in new tab
-                        </a>
-                    </div>
-
-                    <label className="col-md-6">
-                    <select
-                        className='form-control'
-                        value={documentStatuses[file._id] || ''}
-                        onChange={(e) =>
-                            handleDocumentStatusChange(file._id, e.target.value)
-                        }
-                    >
-                        <option value="Pending">Pending</option>
-                        <option value="Approved">Approved</option>
-                        <option value="ActionNeeded">Action Needed</option>
-                        <option value="Completed">Completed</option>
-                    </select>
-                    </label><br/>
+              <div key={file._id}>
+                <div className="col-md-6">
+                  {file.document} :{" "}
+                  <a
+                    href={`http://localhost:4000/${file.url}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    View in new tab
+                  </a>
                 </div>
-                ))}
-            </ul>
-            
-            <button onClick={handleUpdateStatus} className='btn btn-primary form-control col-md-6'>Update Status</button>
+
+                <label className="col-md-6">
+                  <select
+                    className="form-control"
+                    value={documentStatuses[file._id] || ""}
+                    onChange={(e) =>
+                      handleDocumentStatusChange(file._id, e.target.value)
+                    }
+                  >
+                    <option value="Pending">Pending</option>
+                    <option value="Approved">Approved</option>
+                    <option value="ActionNeeded">Action Needed</option>
+                    <option value="Completed">Completed</option>
+                  </select>
+                </label>
+                <br />
+              </div>
+            ))}
+          </ul>
+
+          <button
+            onClick={handleUpdateStatus}
+            className="btn btn-primary form-control col-md-6"
+          >
+            Update Status
+          </button>
         </div>
 
         <div>
-          <div style={{height:"70px"}}></div>
-          <div class="cardHeader">
+          <div style={{ height: "70px" }}></div>
+          <div className="cardHeader">
             <h2>Logs</h2>
           </div>
-          <table class="table table-striped table-hover table-bordered" style={{width: "100%"}}>
+          <table
+            className="table table-striped table-hover table-bordered"
+            style={{ width: "100%" }}
+          >
             <thead>
               <tr>
                 <td>Date</td>
@@ -264,37 +312,73 @@ const Application = ({ address, contract }) => {
               </tr>
             </thead>
             <tbody>
-              {logs.map((log) => (
-                <tr>
+              {logs.map((log, index) => (
+                <tr key={index}>
                   <td>{log?.date}</td>
                   <td>{log?.data}</td>
-                  <td>{log?.adminId?.address.substring(0, 5)}...{log?.adminId?.address.slice(-3)}</td>
+                  <td>
+                    {log?.adminId?.address.substring(0, 5)}...
+                    {log?.adminId?.address.slice(-3)}
+                  </td>
                 </tr>
               ))}
-
             </tbody>
           </table>
         </div>
       </div>
 
       {showTransactionDetails && (
-        <div style={{position:"absolute", top:"0", left:"0", width:"100vw", height:"100vh", display:"flex", justifyContent:"center", alignItems:"center"}}>
-          <div style={{width:"50vw", height:"50vh", background:"#459cfc", color:"#eee", padding:"15px", display:"flex", borderRadius:"7px", justifyContent:"center", flexDirection:"column", alignItems:"center"}}>
+        <div
+          style={{
+            position: "absolute",
+            top: "0",
+            left: "0",
+            width: "100vw",
+            height: "100vh",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <div
+            style={{
+              width: "50vw",
+              height: "50vh",
+              background: "#459cfc",
+              color: "#eee",
+              padding: "15px",
+              display: "flex",
+              borderRadius: "7px",
+              justifyContent: "center",
+              flexDirection: "column",
+              alignItems: "center",
+            }}
+          >
             <h3>Transaction Details</h3>
             <p>Transaction Hash: {transactionDetails.transactionHash}</p>
             <p>Stored URL: {transactionDetails.storedURL}</p>
             <p>
-              Transaction Link:{' '}
+              Transaction Link:{" "}
               <a
                 href={`https://testnet.bscscan.com/tx/${transactionDetails.transactionHash}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                style={{color:"#000"}}
+                style={{ color: "#000" }}
               >
                 View on BSCScan
               </a>
             </p>
-            <button onClick={handleClosePopup} style={{background:"#fff", color:"#111", padding:"7px 20px", borderRadius:"7px"}}>Close</button>
+            <button
+              onClick={handleClosePopup}
+              style={{
+                background: "#fff",
+                color: "#111",
+                padding: "7px 20px",
+                borderRadius: "7px",
+              }}
+            >
+              Close
+            </button>
           </div>
         </div>
       )}
