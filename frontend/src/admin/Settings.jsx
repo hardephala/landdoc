@@ -498,6 +498,8 @@ const Settings = ({ address }) => {
                 )}
               </form>
             </div>
+            <br />
+            <br />
             {showSModal && <Modal text={reason} status="success" />}
             {showEModal && <Modal text={reason} status="error" />}
           </div>
