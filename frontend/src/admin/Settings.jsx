@@ -215,6 +215,18 @@ const Settings = ({ address }) => {
     }
   };
 
+  const allStatusTypes = [
+    "pending",
+    "processing",
+    "final assessment",
+    "approved",
+    "approved",
+    "pending payment",
+    "payment confirmed",
+    "final approval",
+    "completed",
+  ];
+
   return (
     <div className="container">
       <div className="row">
@@ -289,8 +301,7 @@ const Settings = ({ address }) => {
                     ))}
                   </select>
                   <label>Status From</label>
-                  <input
-                    type="text"
+                  <select
                     placeholder="Pending"
                     value={step.from}
                     onChange={(e) =>
@@ -299,10 +310,15 @@ const Settings = ({ address }) => {
                     className="form-control input-md"
                     required
                     style={{ marginBottom: "2px" }}
-                  />
+                  >
+                    <option value="">Select Role</option>
+                    {allStatusTypes.map((status) => (
+                      <option key={status}>{status}</option>
+                    ))}
+                  </select>
+
                   <label>Status To</label>
-                  <input
-                    type="text"
+                  <select
                     placeholder="To"
                     value={step.to}
                     onChange={(e) =>
@@ -311,7 +327,12 @@ const Settings = ({ address }) => {
                     className="form-control input-md"
                     required
                     style={{ marginBottom: "6px" }}
-                  />
+                  >
+                    <option value="">Select Role</option>
+                    {allStatusTypes.map((status) => (
+                      <option key={status}>{status}</option>
+                    ))}
+                  </select>
 
                   {/* Button Action to Add Status Step */}
                   <button

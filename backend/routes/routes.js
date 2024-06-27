@@ -57,7 +57,7 @@ router.delete("/users/admins/:adminId", demoteAdminToUser);
 router.get("/users/:address", getUser);
 router.get("/users/:address/applications", getUserApplications);
 
-//Requirement Routes
+//Requirement Routes .// add checkUserRole letter
 router.post("/requirements", validateRequirement, createRequirement);
 router.get("/requirements", getRequirements);
 router.delete("/requirements/:requirementId", deleteRequirement);

@@ -210,7 +210,7 @@ const getAllApplications = async (req, res) => {
     ]);
 
     const groupedApplications = {};
-    const allStatusTypes = ['Pending', 'Approved', 'ActionNeeded', 'Completed'];
+    const allStatusTypes = ['pending', 'processing', 'final assessment', 'approved', 'approved', 'pending payment', 'payment confirmed', 'final approval', 'completed'];
 
     allStatusTypes.forEach((status) => {
       groupedApplications[status] = {
@@ -220,7 +220,7 @@ const getAllApplications = async (req, res) => {
     });
 
     const recentApplications = await Application.find()
-      .sort({ createDate: -1 })
+      .sort({ createdAt: -1 })
       .limit(25)
       .populate('documents')
       .populate({
