@@ -1,6 +1,6 @@
 const Requirement = require('../models/RequirementModel.js');
 const RequiredDocument = require('../models/ReqDocsModel.js');
-const RequiredStep = require('../models/ReqStepModel.js');
+const respond = require('../utils/respond/index.js');
 
 const createRequirement = async (req, res) => {
   try {
@@ -19,11 +19,13 @@ const createRequirement = async (req, res) => {
 
     await requirement.save();
 
-    const populatedRequirement = await Requirement.populate(requirement, {
+    const populatedRequirement = await requirement.populate({
       path: 'requiredDocuments', 
     });
 
-    res.json({ status: 'success', message: 'Saved successfully', requirement:populatedRequirement });
+    // res.json({ status: 'success', message: 'Requirement Saved Successfully', requirement });
+
+    respond(res, 201, 'Requirement Saved Successfully', populatedRequirement)
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: 'Failed' });
@@ -32,7 +34,7 @@ const createRequirement = async (req, res) => {
 
 const getRequirements = async (req, res) => {
   try {
-    const requirements = await Requirement.find({}).populate('requiredDocuments');
+    const requirements = await Requirement.find({})
     res.json(requirements);
   } catch (error) {
     console.error(error);

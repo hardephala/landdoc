@@ -29,7 +29,30 @@ const getAllAdminRoles = async (req, res) => {
   }
 };
 
+
+
+const deleteAdminRoles = async (req, res) => {
+  const { roles } = req.body;
+  try {
+    for(let role of roles) {
+      const existing = await AdminRole.findById(role);
+      if (!existing) {
+        // return res.status(404).json({ error: 'Requirement not found' });
+        continue;
+      }
+      await existing.deleteOne();
+    }
+
+    res.json({ message: 'Roles deleted succesfully.' });
+  } catch (error) {
+    console.error('Error deleting requirement:', error);
+    res.status(500).json({ error: 'Failed to delete requirement' });
+  }
+};
+
+
 module.exports = {
   createAdminRoles,
-  getAllAdminRoles
+  getAllAdminRoles,
+  deleteAdminRoles
 };

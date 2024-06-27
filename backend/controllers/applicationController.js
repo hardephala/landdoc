@@ -10,7 +10,9 @@ const TransactionLog = require('../models/LogModel.js')
 
 const createApplication = async (req, res) => {
   try {
-    const { address, applicationName, documentsURL, StatusSteps, ownerFullName, ownerAddress, prevOwnerType, developed, occupied, residentType, sizeSqm, location } = req.body;
+    const { address, applicationName,
+      // StatusSteps,
+      documentsURL, ownerFullName, ownerAddress, prevOwnerType, developed, occupied, residentType, sizeSqm, location } = req.body;
     const user = await User.findOne({ address: new RegExp(address, 'i') });
     const requirement = await Requirement.findOne({applicationName});
     
@@ -28,19 +30,19 @@ const createApplication = async (req, res) => {
       createdDocuments.push(document);
     }
 
-    const createdSteps = [];
+    // const createdSteps = [];
 
-    for (const [stepstatus, steporderno] of Object.entries(StatusSteps)) {
-      const step = new RequiredStep({
-        requirement: requirement.requiredSteps,
-        stepstatus: stepstatus,
-        steporderno: steporderno,
-        userprofile: user.role
-      });
+    // for (const [stepstatus, steporderno] of Object.entries(StatusSteps)) {
+    //   const step = new RequiredStep({
+    //     requirement: requirement.requiredSteps,
+    //     stepstatus: stepstatus,
+    //     steporderno: steporderno,
+    //     userprofile: user.role
+    //   });
 
-      await step.save();
-      createdSteps.push(step);
-    }
+    //   await step.save();
+    //   createdSteps.push(step);
+    // }
 
     const application = new Application({
       userId: user._id,
@@ -54,7 +56,7 @@ const createApplication = async (req, res) => {
       sizeSqm,
       location,
       documents: createdDocuments.map((doc) => doc._id),
-      status: createdSteps.map((step) => step.requiredSteps)
+      // status
     });
 
     console.log(application)
