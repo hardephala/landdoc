@@ -34,7 +34,7 @@ const createRequirement = async (req, res) => {
 
 const getRequirements = async (req, res) => {
   try {
-    const requirements = await Requirement.find({})
+    const requirements = await Requirement.find({}).populate('requiredDocuments')
     res.json(requirements);
   } catch (error) {
     console.error(error);
