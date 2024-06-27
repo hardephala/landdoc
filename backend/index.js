@@ -1,9 +1,11 @@
 const express = require("express");
-const path = require("path")
+const path = require("path");
 const mongoose = require("mongoose");
 const cors = require("cors");
 const dotenv = require("dotenv");
 const router = require("./routes/routes");
+const AdminRole = require("./models/AdminRole");
+const User = require("./models/UserModel");
 
 dotenv.config();
 
@@ -15,7 +17,6 @@ mongoose
   .catch((err) => {
     console.log(err.message);
   });
-
 
 // const { MongoClient, ServerApiVersion } = require('mongodb');
 // const uri = "mongodb+srv://taiwo:test12345@atlascluster.g2grb3p.mongodb.net/?retryWrites=true&w=majority&appName=AtlasCluster";
@@ -43,19 +44,52 @@ mongoose
 // }
 // run().catch(console.dir);
 
-
 const app = express();
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
+app.use((req, res, next) => {
+  console.log(req.method.toUpperCase(), req.path);
+  next();
+});
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 app.use("/api", router);
 
-
-
 const port = process.env.PORT || 4000;
 app.listen(port, () => {
   console.log(`serve at http://localhost:${port}`);
 });
+
+
+// (async () => {
+
+// const roles = ['admin','IntakeOfficer','SchemeOfficer','ExecutiveSecretary','Account','Legal','PermanentSecretary','Commissioner','Registry','Collection']
+// const newRoles = await Promise.all(roles.map(async (role) => {
+//   const newRole = new AdminRole({
+//     role
+//   });
+//   await newRole.save();
+//   return newRole;
+// }));
+
+// console.log(newRoles);
+// })()
+
+// (async () => {
+// const user = await User.findOneAndUpdate({
+//   address: '0x41ba5d2a8efe1a9bc127d7819276f8a0695127cb',
+  
+// }, {
+//   role: 'admin'
+// }, {
+//   new: true, 
+
+// })
+
+// await user.save()
+
+// console.log(user);
+
+// })()

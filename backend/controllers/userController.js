@@ -104,8 +104,8 @@ const getUserApplications = async (req, res) => {
 
 const getAdmins = async (req, res) => {
   try {
-    //const admins = await User.find({ role: "IntakeOfficer,SchemeOfficer,ExecutiveSecretary,Account,Legal,PermanentSecretary,Commissioner,Registry,Collection" })
-    const admins = await User.find({ role: "admin" });
+    const roles = ["IntakeOfficer", "SchemeOfficer", "ExecutiveSecretary", "Account", "Legal", "PermanentSecretary", "Commissioner", "Registry", "Collection"];
+    const admins = await User.find({ role: { $in: roles } });
     if (!admins) {
       return res.status(404).json({ error: "Admins not found" });
     }

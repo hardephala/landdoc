@@ -1,108 +1,106 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
 
+import { Link, Route, Routes } from "react-router-dom";
+import Navigation from "./admin/Navigation";
+import Applications from "./admin/Applications";
+import Settings from "./admin/Settings";
+import Recent from "./admin/Recent";
+import Application from "./admin/Application";
 
-import { Route, Routes } from 'react-router-dom';
-import Navigation from './admin/Navigation';
-import Applications from './admin/Applications';
-import Settings from './admin/Settings';
-import Recent from './admin/Recent';
-import Application from './admin/Application';
-
-import axios from 'axios';
-import { ethers } from 'ethers';
-import AOS from 'aos';
-import 'aos/dist/aos.css';
-import './assets/css/style.css'
-import './assets/vendor/aos/aos.css'
-import './assets/vendor/bootstrap/css/bootstrap.min.css'
-import './assets/vendor/bootstrap-icons/bootstrap-icons.css'
-import './assets/vendor/boxicons/css/boxicons.min.css'
-import './assets/vendor/glightbox/css/glightbox.min.css'
-import './assets/vendor/swiper/swiper-bundle.min.css'
-import Modal from './Modal';
-import Apps from './Apps';
+import axios from "axios";
+import { ethers } from "ethers";
+import AOS from "aos";
+import "aos/dist/aos.css";
+import "./assets/css/style.css";
+import "./assets/vendor/aos/aos.css";
+import "./assets/vendor/bootstrap/css/bootstrap.min.css";
+import "./assets/vendor/bootstrap-icons/bootstrap-icons.css";
+import "./assets/vendor/boxicons/css/boxicons.min.css";
+import "./assets/vendor/glightbox/css/glightbox.min.css";
+import "./assets/vendor/swiper/swiper-bundle.min.css";
+import Modal from "./Modal";
+import Apps from "./Apps";
 
 function App() {
   const [provider, setProvider] = useState(null);
   const [contract, setContract] = useState(null);
-  const [userAddress, setUserAddress] = useState('');
-  const [userRole, setUserRole] = useState('user');
-  const [tokenBalance, setTokenBalance] = useState('0');
+  const [userAddress, setUserAddress] = useState("");
+  const [userRole, setUserRole] = useState("user");
+  const [tokenBalance, setTokenBalance] = useState("0");
   const [isConnected, setIsConnected] = useState(false);
   const [applications, setApplications] = useState([]);
   const [allApplications, setAllApplications] = useState({});
-  const [showApps, setShowApps] = useState(false)
+  const [showApps, setShowApps] = useState(false);
 
-  
   const [requirements, setRequirements] = useState([]);
   const [selectedRequirement, setSelectedRequirement] = useState(null);
   const [documents, setDocuments] = useState({});
   const [documentsURL, setDocumentsURL] = useState({});
   const [totalFees, setTotalFees] = useState(0);
 
-  const [ownerFullName, setOwnerFullName] = useState('')
-  const [ownerAddress, setOwnerAddress] = useState('')
-  const [prevOwnerType, setPrevOwnerType] = useState('')
-  const [developed, setDeveloped] = useState('')
-  const [occupied, setOccupied] = useState('')
-  const [residentType, setResidentType] = useState('')
-  const [sizeSqm, setSizeSqm] = useState('')
-  const [location, setLocation] = useState('')
+  const [ownerFullName, setOwnerFullName] = useState("");
+  const [ownerAddress, setOwnerAddress] = useState("");
+  const [prevOwnerType, setPrevOwnerType] = useState("");
+  const [developed, setDeveloped] = useState("");
+  const [occupied, setOccupied] = useState("");
+  const [residentType, setResidentType] = useState("");
+  const [sizeSqm, setSizeSqm] = useState("");
+  const [location, setLocation] = useState("");
   const [isAdminLoaded, setIsAdminLoaded] = useState(false);
   const [isAdmin, setIsAdmin] = useState();
 
-
-  const contractAddress = '0x6b99837176575a48837F34E4A8ee018d2622F865';
+  const contractAddress = "0x6b99837176575a48837F34E4A8ee018d2622F865";
 
   const abi = [
     {
-      "inputs": [
+      inputs: [
         {
-          "internalType": "string",
-          "name": "identifier",
-          "type": "string"
-        }
+          internalType: "string",
+          name: "identifier",
+          type: "string",
+        },
       ],
-      "name": "getHashByIdentifier",
-      "outputs": [
+      name: "getHashByIdentifier",
+      outputs: [
         {
-          "internalType": "string",
-          "name": "",
-          "type": "string"
-        }
+          internalType: "string",
+          name: "",
+          type: "string",
+        },
       ],
-      "stateMutability": "view",
-      "type": "function"
+      stateMutability: "view",
+      type: "function",
     },
     {
-      "inputs": [
+      inputs: [
         {
-          "internalType": "string",
-          "name": "identifier",
-          "type": "string"
+          internalType: "string",
+          name: "identifier",
+          type: "string",
         },
         {
-          "internalType": "string",
-          "name": "hash",
-          "type": "string"
-        }
+          internalType: "string",
+          name: "hash",
+          type: "string",
+        },
       ],
-      "name": "storeHash",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    }
-  ]
-    
+      name: "storeHash",
+      outputs: [],
+      stateMutability: "nonpayable",
+      type: "function",
+    },
+  ];
 
   const checkDBForUser = async (address) => {
     try {
+      const { data: rolesData } = await axios.get(
+        `http://localhost:4000/api/admin/roles/`,
+        { address }
+      );
 
-      const { data: rolesData } = await axios.get(`http://localhost:4000/api/admin/roles/`, { address },)
-
-      const roles = rolesData.data.map(role => role.role)
-      console.log(roles)
-      console.log(address)
+      const roles = rolesData.data.map((role) => role.role);
+      console.log(roles);
+      console.log(address);
       const results = await axios.post(
         `http://localhost:4000/api/check-user`,
         { address },
@@ -110,8 +108,8 @@ function App() {
       );
       setApplications(results.data.applications);
       setUserRole(results.data.role);
-      console.log(results.data.role)
-      if(roles.includes(results.data.role)) {
+      console.log(results.data.role);
+      if (roles.includes(results.data.role)) {
         try {
           const results = await axios.post(
             `http://localhost:4000/api/applications/admin`,
@@ -123,73 +121,70 @@ function App() {
           setIsAdminLoaded(true);
           console.log("ADMINNNNNNN");
         } catch (err) {
-          console.log(err)
+          console.log(err);
         }
       }
     } catch (err) {
-      console.log(err)
+      console.log(err);
     }
-  }
+  };
 
   const connectWallet = async () => {
     if (window.ethereum) {
       try {
-        await window.ethereum.request({ method: 'eth_requestAccounts' });
+        await window.ethereum.request({ method: "eth_requestAccounts" });
 
         const web3Provider = new ethers.BrowserProvider(window.ethereum);
         setProvider(web3Provider);
         const signer = await web3Provider.getSigner();
 
-        const chainId = '0x61';
+        const chainId = "0x61";
         const isNetworkAdded = await window.ethereum.request({
-          method: 'eth_chainId',
+          method: "eth_chainId",
         });
 
         if (isNetworkAdded !== chainId) {
           const networkParams = {
-            chainId: '0x61',
-            chainName: 'Binance Smart Chain Testnet',
+            chainId: "0x61",
+            chainName: "Binance Smart Chain Testnet",
             nativeCurrency: {
-              name: 'BNB',
-              symbol: 'bnb',
+              name: "BNB",
+              symbol: "bnb",
               decimals: 18,
             },
-            rpcUrls: ['https://data-seed-prebsc-1-s1.binance.org:8545/'],
-            blockExplorerUrls: ['https://testnet.bscscan.com/'],
+            rpcUrls: ["https://data-seed-prebsc-1-s1.binance.org:8545/"],
+            blockExplorerUrls: ["https://testnet.bscscan.com/"],
           };
 
           await window.ethereum.request({
-            method: 'wallet_addEthereumChain',
+            method: "wallet_addEthereumChain",
             params: [networkParams],
           });
         }
 
         const accounts = await web3Provider.listAccounts();
         setUserAddress(accounts[0].address);
-        checkDBForUser(accounts[0].address)
-        
-        const contractInstance = new ethers.Contract(contractAddress, abi, signer);
+        checkDBForUser(accounts[0].address);
+
+        const contractInstance = new ethers.Contract(
+          contractAddress,
+          abi,
+          signer
+        );
         setContract(contractInstance);
 
         setIsConnected(true);
       } catch (error) {
-        console.error('Error connecting wallet:', error);
+        console.error("Error connecting wallet:", error);
       }
     } else {
-      alert('Please install a compatible wallet extension or use MetaMask.');
+      alert("Please install a compatible wallet extension or use MetaMask.");
     }
   };
 
   const disconnectWallet = () => {
     window.location.reload();
   };
-
-
-
-
-
-
-
 
   useEffect(() => {
     if (window.ethereum) {
@@ -198,35 +193,38 @@ function App() {
           const web3Provider = new ethers.BrowserProvider(window.ethereum);
           setProvider(web3Provider);
           setUserAddress(window.ethereum.selectedAddress);
-          checkDBForUser(window.ethereum.selectedAddress)
+          checkDBForUser(window.ethereum.selectedAddress);
           const signer = await web3Provider.getSigner();
 
-          const chainId = '0x61';
+          const chainId = "0x61";
           const isNetworkAdded = await window.ethereum.request({
-            method: 'eth_chainId',
+            method: "eth_chainId",
           });
 
           if (isNetworkAdded !== chainId) {
             const networkParams = {
-              chainId: '0x61',
-              chainName: 'Binance Smart Chain Testnet',
+              chainId: "0x61",
+              chainName: "Binance Smart Chain Testnet",
               nativeCurrency: {
-                name: 'BNB',
-                symbol: 'bnb',
+                name: "BNB",
+                symbol: "bnb",
                 decimals: 18,
               },
-              rpcUrls: ['https://data-seed-prebsc-1-s1.binance.org:8545/'],
-              blockExplorerUrls: ['https://testnet.bscscan.com/'],
+              rpcUrls: ["https://data-seed-prebsc-1-s1.binance.org:8545/"],
+              blockExplorerUrls: ["https://testnet.bscscan.com/"],
             };
 
             await window.ethereum.request({
-              method: 'wallet_addEthereumChain',
+              method: "wallet_addEthereumChain",
               params: [networkParams],
             });
-
           }
 
-          const contractInstance = new ethers.Contract(contractAddress, abi, signer);
+          const contractInstance = new ethers.Contract(
+            contractAddress,
+            abi,
+            signer
+          );
           setContract(contractInstance);
           setIsConnected(true);
         };
@@ -234,31 +232,30 @@ function App() {
         initiateContract();
       }
 
-      window.ethereum.on('accountsChanged', (accounts) => {
+      window.ethereum.on("accountsChanged", (accounts) => {
         if (accounts.length === 0) {
           setProvider(null);
-          setUserAddress('');
+          setUserAddress("");
           setIsConnected(false);
         } else {
           setUserAddress(accounts[0]);
-          checkDBForUser(accounts[0])
+          checkDBForUser(accounts[0]);
 
           connectWallet();
         }
       });
-
     }
   }, []);
 
   useEffect(() => {
     AOS.init({
       duration: 1000,
-      easing: 'ease-in-out',
+      easing: "ease-in-out",
       once: true,
-      mirror: false
+      mirror: false,
     });
   }, []);
-  
+
   useEffect(() => {
     if (provider && userAddress) {
       const fetchBalance = async () => {
@@ -269,8 +266,6 @@ function App() {
       fetchBalance();
     }
   }, [provider, userAddress, applications]);
-
-
 
   const getRequirements = async () => {
     try {
@@ -297,15 +292,15 @@ function App() {
   const handleDocumentUpload = async (documentName) => {
     try {
       const formData = new FormData();
-      formData.append('documentName', documentName);
-      formData.append('file', documents[documentName]);
+      formData.append("documentName", documentName);
+      formData.append("file", documents[documentName]);
 
       const results = await axios.post(
-        'http://localhost:4000/api/upload',
+        "http://localhost:4000/api/upload",
         formData,
         {
           headers: {
-            'Content-Type': 'multipart/form-data',
+            "Content-Type": "multipart/form-data",
           },
         }
       );
@@ -320,10 +315,19 @@ function App() {
   };
 
   const handleApplicationSubmit = async () => {
-    if (!ownerFullName || !ownerAddress || !prevOwnerType || !developed || !occupied || !residentType || !sizeSqm || !location) {
-      alert("Fill in the required fields")
-      return
-    } 
+    if (
+      !ownerFullName ||
+      !ownerAddress ||
+      !prevOwnerType ||
+      !developed ||
+      !occupied ||
+      !residentType ||
+      !sizeSqm ||
+      !location
+    ) {
+      alert("Fill in the required fields");
+      return;
+    }
     calculateTotalFees();
 
     if (window.ethereum) {
@@ -333,28 +337,38 @@ function App() {
         });
         const paymentTransaction = {
           from: account[0],
-          to: '0x36C29A945be74516303B367a6aFEF0692A9Ae4cb',
+          to: "0x36C29A945be74516303B367a6aFEF0692A9Ae4cb",
           value: totalFees.toString(),
         };
 
         await window.ethereum.request({
-          method: 'eth_sendTransaction',
+          method: "eth_sendTransaction",
           params: [paymentTransaction],
         });
-        
 
         const results = await axios.post(
-          'http://localhost:4000/api/applications',
-          { address:userAddress, ownerFullName, ownerAddress, prevOwnerType, developed, occupied, residentType, sizeSqm, location, documentsURL, 'applicationName': selectedRequirement.applicationName },
+          "http://localhost:4000/api/applications",
+          {
+            address: userAddress,
+            ownerFullName,
+            ownerAddress,
+            prevOwnerType,
+            developed,
+            occupied,
+            residentType,
+            sizeSqm,
+            location,
+            documentsURL,
+            applicationName: selectedRequirement.applicationName,
+          },
           {}
         );
-        console.log(results)
-
+        console.log(results);
       } catch (error) {
         console.error(error);
       }
     } else {
-      console.error('MetaMask extension not detected');
+      console.error("MetaMask extension not detected");
     }
   };
 
@@ -379,66 +393,128 @@ function App() {
   }, [selectedRequirement]);
 
   useEffect(() => {
-    if (isConnected && userRole === 'admin' && allApplications && Object.keys(allApplications).length > 0 && !isAdminLoaded) {
+    if (
+      isConnected &&
+      userRole === "admin" &&
+      allApplications &&
+      Object.keys(allApplications).length > 0 &&
+      !isAdminLoaded
+    ) {
       setIsAdminLoaded(true);
-      setIsAdmin(true)
-      console.log("ADMINNNNNNN")
+      setIsAdmin(true);
+      console.log("ADMINNNNNNN");
     }
   }, [isConnected, userRole, allApplications, isAdminLoaded, isAdmin]);
 
-
   if (isAdminLoaded && isAdmin) {
-      return (
-        <div className="container-fluid">
-          <div className="main">
-            <Navigation role={userRole} />
-
-            <Routes>
-                <Route path="/" element={<Recent address={userAddress} />} />
-                <Route path="/applications" element={<Applications address={userAddress} />} />
-                <Route path="/application/:applicationId" element={<Application address={userAddress} contract={contract} />} />
-                <Route path="/settings" element={<Settings address={userAddress}/>} />
-            </Routes>
-          </div>
-        </div>
-      )
-    }
-
-
-
     return (
-      <>
+      <div className="container-fluid">
+        <div className="main">
+          <Navigation role={userRole} />
+
+          <Routes>
+            <Route path="/" element={<Recent address={userAddress} />} />
+            <Route
+              path="/applications"
+              element={<Applications address={userAddress} />}
+            />
+            <Route
+              path="/application/:applicationId"
+              element={
+                <Application address={userAddress} contract={contract} />
+              }
+            />
+            <Route
+              path="/settings"
+              element={<Settings address={userAddress} />}
+            />
+          </Routes>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <>
       <header id="header" className="fixed-top d-flex align-items-center">
         <div className="container d-flex align-items-center">
           <div className="logo me-auto">
-            <h1><a href="index.html">Land Doc</a></h1>
+            <h1>
+              <a href="index.html">Land Doc</a>
+            </h1>
           </div>
           <nav id="navbar" className="navbar order-last order-lg-0">
             <ul>
-              <li><a className="nav-link scrollto active" href="#hero">Home</a></li>
-              <li className="dropdown"><a href="#"><span>About</span> <i className="bi bi-chevron-down"></i></a>
+              <li>
+                <a className="nav-link scrollto active" href="#hero">
+                  Home
+                </a>
+              </li>
+              <li className="dropdown">
+                <a href="#">
+                  <span>About</span> <i className="bi bi-chevron-down"></i>
+                </a>
                 <ul>
-                  <li><a className="nav-link scrollto" href="#about">About Us</a></li>
-                  <li className="dropdown"><a href="#"><span>Applications</span> <i className="bi bi-chevron-right"></i></a>
+                  <li>
+                    <a className="nav-link scrollto" href="#about">
+                      About Us
+                    </a>
+                  </li>
+                  <li className="dropdown">
+                    <a href="#">
+                      <span>Applications</span>{" "}
+                      <i className="bi bi-chevron-right"></i>
+                    </a>
                     <ul>
-                      <li><a href="#">Legitimacy Search</a></li>
-                      <li><a href="#">Survey Plan</a></li>
-                      <li><a href="#">Regularization</a></li>
-                      <li><a href="#">Certificate of Occupancy</a></li>
-                      <li><a href="#">Deed of Assignment</a></li>
+                      <li>
+                        <a href="#">Legitimacy Search</a>
+                      </li>
+                      <li>
+                        <a href="#">Survey Plan</a>
+                      </li>
+                      <li>
+                        <a href="#">Regularization</a>
+                      </li>
+                      <li>
+                        <a href="#">Certificate of Occupancy</a>
+                      </li>
+                      <li>
+                        <a href="#">Deed of Assignment</a>
+                      </li>
                     </ul>
                   </li>
                 </ul>
               </li>
-              <li><a className="nav-link" style={{cursor:"pointer"}} onClick={()=>{ if(isConnected) { window.scrollTo({top: 0, left: 0, behavior: 'smooth'}); setShowApps(true); } else alert("Wallet not connected")}}>Applications</a></li>
+              <li>
+                <a
+                  className="nav-link"
+                  style={{ cursor: "pointer" }}
+                  onClick={() => {
+                    if (isConnected) {
+                      window.scrollTo({ top: 0, left: 0, behavior: "smooth" });
+                      setShowApps(true);
+                    } else alert("Wallet not connected");
+                  }}
+                >
+                  Applications
+                </a>
+              </li>
             </ul>
             <i className="bi bi-list mobile-nav-toggle"></i>
           </nav>
           <div className="header-social-links d-flex align-items-center">
-            <a href="#" className="twitter"><i className="bi bi-twitter"></i></a>
-            <a href="#" className="facebook"><i className="bi bi-facebook"></i></a>
-            <a href="#" className="instagram"><i className="bi bi-instagram"></i></a>
-            <a href="#" className="linkedin"><i className="bi bi-linkedin"></i></a>
+            <a href="#" className="twitter">
+              <i className="bi bi-twitter"></i>
+            </a>
+            <a href="#" className="facebook">
+              <i className="bi bi-facebook"></i>
+            </a>
+            <a href="#" className="instagram">
+              <i className="bi bi-instagram"></i>
+            </a>
+            <a href="#" className="linkedin">
+              <i className="bi bi-linkedin"></i>
+            </a>
           </div>
         </div>
       </header>
@@ -447,24 +523,41 @@ function App() {
       <section id="hero">
         <div className="container">
           <div className="row">
-            <div className="col-lg-6 pt-5 pt-lg-0 order-2 order-lg-1 d-flex flex-column justify-content-center" data-aos="fade-up">
+            <div
+              className="col-lg-6 pt-5 pt-lg-0 order-2 order-lg-1 d-flex flex-column justify-content-center"
+              data-aos="fade-up"
+            >
               <div>
                 <h1>Our Trust is Guaranteed</h1>
-                <h2>We offer a decentralized application to store land documents that cannot be tampered with. Every record inserted into the blockchain is immutable.</h2>
-                <button className="btn-get-started scrollto" onClick={isConnected ? disconnectWallet : connectWallet}>{isConnected ? "Disconnect Wallet" : "Connect Wallet"}</button>
+                <h2>
+                  We offer a decentralized application to store land documents
+                  that cannot be tampered with. Every record inserted into the
+                  blockchain is immutable.
+                </h2>
+                <button
+                  className="btn-get-started scrollto"
+                  onClick={isConnected ? disconnectWallet : connectWallet}
+                >
+                  {isConnected ? "Disconnect Wallet" : "Connect Wallet"}
+                </button>
                 {isConnected && (
                   <div>
-                    {userAddress}<br/>Balance: {tokenBalance} BNB
+                    {userAddress}
+                    <br />
+                    Balance: {tokenBalance} BNB
                   </div>
                 )}
-                {(isConnected && isAdmin) ?
-                    <Link to="/admin">Admin Dashboard</Link>
-                    :
-                    <></>
-                }
+                {isConnected && isAdmin ? (
+                  <Link to="/admin">Admin Dashboard</Link>
+                ) : (
+                  <></>
+                )}
               </div>
             </div>
-            <div className="col-lg-6 order-1 order-lg-2 hero-img" data-aos="fade-left">
+            <div
+              className="col-lg-6 order-1 order-lg-2 hero-img"
+              data-aos="fade-left"
+            >
               <img src="assets/img/hero-img.png" className="img-fluid" alt="" />
             </div>
           </div>
@@ -474,98 +567,135 @@ function App() {
       {/* Main Content */}
       <main id="main">
         {/* Contact Section */}
-        { isConnected && (
-        <section id="contact" className="contact section-bg">
-          <div className="container">
-            <div className="section-title" data-aos="fade-up">
-              <h2>Apply For Documents</h2>
-            </div>
-            <div className="row">
-              <div className="col-lg-12 mt-5 mt-lg-0 d-flex align-items-stretch" data-aos="fade-left">
-                <div className="php-email-form">
-                  <div className="row">
-                    <div className="form-group col-md-6">
-                      <label htmlFor="name">Full name</label>
-                      <input type="text" name="name"  className="form-control" id="name" required />
-                    </div>
-                    <div className="form-group col-md-6 mt-3 mt-md-0">
-                      <label htmlFor="address">Email address</label>
-                      <input type="text" className="form-control" name="address" id="address" required />
-                    </div>
-                  </div>
-
-
-                  <div className="form-group mt-3">
-                    <select
-                      onChange={handleRequirementChange}
-                      className="app-name-input form-control"
-                      style={{
-                        width: '35%',
-                        padding: '8px',
-                        cursor: 'pointer',
-                      }}
-                      defaultValue="Type of application"
-                    >
-                      <option value="Type of application" disabled hidden>Type of application</option>
-                      {requirements.map((requirement) => (
-                        <option key={requirement._id} value={requirement.applicationName}>
-                          {requirement.applicationName}
-                        </option>
-                      ))}
-                    </select>
-                    {selectedRequirement && (
-                      <div>
-                        <h5 style={{marginTop:"20px", marginLeft:"10px", fontWeight:"bold"}}>Required Documents:</h5>
-                        <ul>
-                          {selectedRequirement.requiredDocuments.map((doc) => (
-                            <li key={doc._id}>
-                              {`${doc.document}: $${doc.fee}`}
-                              <input
-                                type="file"
-                                onChange={(e) =>
-                                  handleFileChange(doc.document, e.target.files[0])
-                                }
-                                style={{ marginLeft: '10px' }}
-                              />
-                              <button
-                                type="button"
-                                className='btn btn-secondary'
-                                onClick={() => handleDocumentUpload(doc.document)}
-                              >
-                                Upload
-                              </button>
-                            </li>
-                          ))}
-                        </ul>
+        {isConnected && (
+          <section id="contact" className="contact section-bg">
+            <div className="container">
+              <div className="section-title" data-aos="fade-up">
+                <h2>Apply For Documents</h2>
+              </div>
+              <div className="row">
+                <div
+                  className="col-lg-12 mt-5 mt-lg-0 d-flex align-items-stretch"
+                  data-aos="fade-left"
+                >
+                  <div className="php-email-form">
+                    <div className="row">
+                      <div className="form-group col-md-6">
+                        <label htmlFor="name">Full name</label>
+                        <input
+                          type="text"
+                          name="name"
+                          className="form-control"
+                          id="name"
+                          required
+                        />
                       </div>
-                    )}
-                  </div>
-                  <div className="text-center">
-                    <button
-                    className='btn btn-primary'
-                    style={{padding:"7px 12px"}}
-                      id="submitApplication"
-                      onClick={ isConnected ? handleApplicationSubmit : connectWallet}
-                    >
-                      Apply - (Pay ${totalFees} BNB)
-                    </button>
-                  </div>
+                      <div className="form-group col-md-6 mt-3 mt-md-0">
+                        <label htmlFor="address">Email address</label>
+                        <input
+                          type="text"
+                          className="form-control"
+                          name="address"
+                          id="address"
+                          required
+                        />
+                      </div>
+                    </div>
 
-
-                  
+                    <div className="form-group mt-3">
+                      <select
+                        onChange={handleRequirementChange}
+                        className="app-name-input form-control"
+                        style={{
+                          width: "35%",
+                          padding: "8px",
+                          cursor: "pointer",
+                        }}
+                        defaultValue="Type of application"
+                      >
+                        <option value="Type of application" disabled hidden>
+                          Type of application
+                        </option>
+                        {requirements.map((requirement) => (
+                          <option
+                            key={requirement._id}
+                            value={requirement.applicationName}
+                          >
+                            {requirement.applicationName}
+                          </option>
+                        ))}
+                      </select>
+                      {selectedRequirement && (
+                        <div>
+                          <h5
+                            style={{
+                              marginTop: "20px",
+                              marginLeft: "10px",
+                              fontWeight: "bold",
+                            }}
+                          >
+                            Required Documents:
+                          </h5>
+                          <ul>
+                            {selectedRequirement.requiredDocuments.map(
+                              (doc) => (
+                                <li key={doc._id}>
+                                  {`${doc.document}: $${doc.fee}`}
+                                  <input
+                                    type="file"
+                                    onChange={(e) =>
+                                      handleFileChange(
+                                        doc.document,
+                                        e.target.files[0]
+                                      )
+                                    }
+                                    style={{ marginLeft: "10px" }}
+                                  />
+                                  <button
+                                    type="button"
+                                    className="btn btn-secondary"
+                                    onClick={() =>
+                                      handleDocumentUpload(doc.document)
+                                    }
+                                  >
+                                    Upload
+                                  </button>
+                                </li>
+                              )
+                            )}
+                          </ul>
+                        </div>
+                      )}
+                    </div>
+                    <div className="text-center">
+                      <button
+                        className="btn btn-primary"
+                        style={{ padding: "7px 12px" }}
+                        id="submitApplication"
+                        onClick={
+                          isConnected ? handleApplicationSubmit : connectWallet
+                        }
+                      >
+                        Apply - (Pay ${totalFees} BNB)
+                      </button>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-        </section>
-      )}
+          </section>
+        )}
       </main>
 
       {/* Footer */}
       <footer id="footer">
         <div className="container">
           <div className="copyright">
-            &copy; Copyright <strong><span>Scaffold</span></strong>. All Rights Reserved
+            &copy; Copyright{" "}
+            <strong>
+              <span>Scaffold</span>
+            </strong>
+            . All Rights Reserved
           </div>
           <div className="credits">
             Designed by <a href="#">Tolu</a>
@@ -574,13 +704,15 @@ function App() {
       </footer>
 
       {/* Back-to-top button */}
-      <a href="#" className="back-to-top d-flex align-items-center justify-content-center">
+      <a
+        href="#"
+        className="back-to-top d-flex align-items-center justify-content-center"
+      >
         <i className="bi bi-arrow-up-short"></i>
       </a>
-      {showApps && (<Apps address={userAddress} setShowApps={setShowApps}/>)}
+      {showApps && <Apps address={userAddress} setShowApps={setShowApps} />}
     </>
-    );
-  }
+  );
+}
 
 export default App;
-

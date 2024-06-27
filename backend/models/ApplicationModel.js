@@ -71,6 +71,8 @@ const applicationSchema = new mongoose.Schema({
   completedDocURL: {
     type: String,
   },
+}, {
+  timestamps: true,
 });
 
 const Application = mongoose.model('Application', applicationSchema);

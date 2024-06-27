@@ -37,7 +37,8 @@ const {
 } = require("../controllers/requirementController.js");
 const {
   createAdminRoles,
-  getAllAdminRoles
+  getAllAdminRoles,
+  deleteAdminRoles
 } = require("../controllers/adminController.js");
 const {
   validateRequirement,
@@ -56,7 +57,7 @@ router.delete("/users/admins/:adminId", demoteAdminToUser);
 router.get("/users/:address", getUser);
 router.get("/users/:address/applications", getUserApplications);
 
-//Requirement Routes
+//Requirement Routes .// add checkUserRole letter
 router.post("/requirements", validateRequirement, createRequirement);
 router.get("/requirements", getRequirements);
 router.delete("/requirements/:requirementId", deleteRequirement);
@@ -92,6 +93,7 @@ router.put("/documents/:documentId/status", updateDocumentStatus);
 
 // admin role
 router.post("/admin/roles", validateAdminRoles, createAdminRoles);
+router.delete("/admin/roles", validateAdminRoles, deleteAdminRoles);
 router.get("/admin/roles", getAllAdminRoles);
 
 

@@ -9,8 +9,8 @@ const validateRequirement = [
     .withMessage('Application name must be a string'),
 
   body('requiredDocuments')
-    .isArray()
-    .withMessage('Required documents must be an array'),
+    .isObject()
+    .withMessage('Required documents must be an object'),
 
   body('requiredSteps')
     .isArray()
