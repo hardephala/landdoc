@@ -13,6 +13,8 @@ const applicationSchema = new mongoose.Schema({
   ownerFullName: {
     type: String,
   },
+  phone: String,
+  email: String,
   ownerAddress: {
     type: String,
   },

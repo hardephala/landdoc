@@ -11,8 +11,12 @@ const TransactionLog = require('../models/LogModel.js')
 const createApplication = async (req, res) => {
   try {
     const { address, applicationName,
-      // StatusSteps,
-      documentsURL, ownerFullName, ownerAddress, prevOwnerType, developed, occupied, residentType, sizeSqm, location } = req.body;
+      documentsURL, ownerFullName, ownerAddress, 
+      phone,
+      email,
+    //  prevOwnerType, developed, occupied, residentType, sizeSqm, location
+    
+    } = req.body;
     const user = await User.findOne({ address: new RegExp(address, 'i') });
     const requirement = await Requirement.findOne({applicationName});
     
@@ -49,12 +53,9 @@ const createApplication = async (req, res) => {
       appType: requirement._id,
       ownerFullName,
       ownerAddress,
-      prevOwnerType,
-      developed,
-      occupied,
-      residentType,
-      sizeSqm,
-      location,
+      phone,
+      email,
+      // prevOwnerType,developed,occupied,residentType,sizeSqm,location,
       documents: createdDocuments.map((doc) => doc._id),
       // status
     });
@@ -210,7 +211,7 @@ const getAllApplications = async (req, res) => {
     ]);
 
     const groupedApplications = {};
-    const allStatusTypes = ['pending', 'processing', 'final assessment', 'approved', 'approved', 'pending payment', 'payment confirmed', 'final approval', 'completed'];
+    const allStatusTypes = ['pending', 'processing', 'final assessment', 'approved', 'pending payment', 'payment confirmed', 'final approval', 'completed'];
 
     allStatusTypes.forEach((status) => {
       groupedApplications[status] = {
