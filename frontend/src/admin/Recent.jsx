@@ -29,34 +29,34 @@ const Recent = ({ address }) => {
   }, []);
 
   return (
-    <div class="container">
+    <div className="container">
       <div style={{ height: "40px" }}></div>
-      <div class="cardBox">
-        <div class="card">
+      <div className="cardBox">
+        <div className="card">
           <div>
-            <div class="numbers">{stats?.totalApplications}</div>
-            <div class="cardName">Applications</div>
+            <div className="numbers">{stats?.totalApplications}</div>
+            <div className="cardName">Applications</div>
           </div>
         </div>
 
-        <div class="card">
+        <div className="card">
           <div>
-            <div class="numbers">{stats?.pendingApplications}</div>
-            <div class="cardName">Pending</div>
+            <div className="numbers">{stats?.pendingApplications}</div>
+            <div className="cardName">Pending</div>
           </div>
         </div>
 
-        <div class="card">
+        <div className="card">
           <div>
-            <div class="numbers">{stats?.totalUsers}</div>
-            <div class="cardName">Users</div>
+            <div className="numbers">{stats?.totalUsers}</div>
+            <div className="cardName">Users</div>
           </div>
         </div>
       </div>
 
-      <div class="details">
-        <div class="recentOrders">
-          <div class="cardHeader">
+      <div className="details">
+        <div className="recentOrders">
+          <div className="cardHeader">
             <h2>Recent Orders</h2>
             <Link to="/applications" class="btn">
               View All
@@ -75,7 +75,7 @@ const Recent = ({ address }) => {
 
             <tbody>
               {stats?.recentApplications.map((application, index) => (
-                <tr>
+                <tr key={index}>
                   <td>{application.appType.applicationName}</td>
                   <td>
                     <span className="status return">{application.status}</span>
@@ -90,16 +90,16 @@ const Recent = ({ address }) => {
           </table>
         </div>
 
-        <div class="recentCustomers">
-          <div class="cardHeader">
+        <div className="recentCustomers">
+          <div className="cardHeader">
             <h2>Recent Users</h2>
           </div>
 
           <table>
             {stats?.recentUsers.map((user, index) => (
-              <tr>
+              <tr key={index}>
                 <td width="60px">
-                  <div class="imgBx">
+                  <div className="imgBx">
                     <img src={customer2} alt="" />
                   </div>
                 </td>
