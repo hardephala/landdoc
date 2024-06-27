@@ -1,13 +1,12 @@
-import React from 'react';
-import {IonIcon} from '@ionic/react'
-import { Link } from 'react-router-dom';
+import React from "react";
+import { IonIcon } from "@ionic/react";
+import { Link } from "react-router-dom";
 
-import customer1 from '../assets/admin/imgs/customer01.jpg'
-import '../assets/admin/vendor/bootstrap/css/bootstrap.min.css'
-import '../assets/admin/css/style.css'
+import customer1 from "../assets/admin/imgs/customer01.jpg";
+import "../assets/admin/vendor/bootstrap/css/bootstrap.min.css";
+import "../assets/admin/css/style.css";
 
 const Navigation = ({ role }) => {
-  
   const disconnectWallet = () => {
     window.location.reload();
   };
@@ -18,15 +17,23 @@ const Navigation = ({ role }) => {
         <li>
           <Link to="/">
             <span className="icon">
-              <IonIcon icon="home"/>
+              <IonIcon icon="home" />
             </span>
-            <span style={{marginRight:"40px", marginTop:"20px", fontWeight:"bolder"}}>DASHBOARD</span>
+            <span
+              style={{
+                marginRight: "40px",
+                marginTop: "20px",
+                fontWeight: "bolder",
+              }}
+            >
+              DASHBOARD
+            </span>
           </Link>
         </li>
         <li>
           <Link to="/">
             <span className="icon">
-            <IonIcon icon="home-outline"/>
+              <IonIcon icon="home-outline" />
             </span>
             <span className="title">Dashboard</span>
           </Link>
@@ -34,25 +41,27 @@ const Navigation = ({ role }) => {
         <li>
           <Link to="/applications">
             <span className="icon">
-              <IonIcon icon="chatbubble-outline"/>
+              <IonIcon icon="chatbubble-outline" />
             </span>
             <span className="title">Applications</span>
           </Link>
         </li>
-        
-     {role === 'admin' && <li>
-          <Link to="/settings">
-            <span className="icon">
-              <IonIcon icon="settings-outline"/>
-            </span>
-            <span className="title">Settings</span>
-          </Link>
-        </li>}
+
+        {role === "admin" && (
+          <li>
+            <Link to="/settings">
+              <span className="icon">
+                <IonIcon icon="settings-outline" />
+              </span>
+              <span className="title">Settings</span>
+            </Link>
+          </li>
+        )}
 
         <li>
           <Link to="#" onClick={disconnectWallet}>
             <span className="icon">
-              <IonIcon icon="log-out-outline"/>
+              <IonIcon icon="log-out-outline" />
             </span>
             <span className="title">Sign Out</span>
           </Link>
