@@ -9,6 +9,7 @@ import Application from "./admin/Application";
 
 import axios from "axios";
 import { ethers } from "ethers";
+import { Web3 } from "web3";
 import AOS from "aos";
 import "aos/dist/aos.css";
 import "./assets/css/style.css";
@@ -20,6 +21,7 @@ import "./assets/vendor/glightbox/css/glightbox.min.css";
 import "./assets/vendor/swiper/swiper-bundle.min.css";
 import Modal from "./Modal";
 import Apps from "./Apps";
+import toast from "react-hot-toast";
 
 function App() {
   const [provider, setProvider] = useState(null);
@@ -39,8 +41,9 @@ function App() {
   const [totalFees, setTotalFees] = useState(0);
 
   const [ownerFullName, setOwnerFullName] = useState("");
-  const [ownerAddress, setOwnerAddress] = useState("");
+  const [email, setEmail] = useState("");
   const [prevOwnerType, setPrevOwnerType] = useState("");
+  const [phone, setPhone] = useState("");
   const [developed, setDeveloped] = useState("");
   const [occupied, setOccupied] = useState("");
   const [residentType, setResidentType] = useState("");
@@ -48,8 +51,11 @@ function App() {
   const [location, setLocation] = useState("");
   const [isAdminLoaded, setIsAdminLoaded] = useState(false);
   const [isAdmin, setIsAdmin] = useState();
+  const [appType, setAppType] = useState("");
 
   const contractAddress = "0x6b99837176575a48837F34E4A8ee018d2622F865";
+  const TRANS_DESTINATION_ADDRESS =
+    "0xdd4b5F3559cD8922f5457053235F575680e51193";
 
   const abi = [
     {
@@ -285,6 +291,7 @@ function App() {
         (total, doc) => total + doc.fee,
         0
       );
+
       setTotalFees(fees);
     }
   };
@@ -309,25 +316,31 @@ function App() {
         ...prevUploads,
         [documentName]: results.data,
       }));
+
+      toast.success("Document uploaded successfully");
     } catch (err) {
       console.log(err);
     }
   };
 
+  const getWeiHex = (amount) =>
+    Number(Web3.utils.toWei(amount, "ether")).toString(16);
   const handleApplicationSubmit = async () => {
     if (
       !ownerFullName ||
-      !ownerAddress ||
-      !prevOwnerType ||
-      !developed ||
-      !occupied ||
-      !residentType ||
-      !sizeSqm ||
-      !location
+      !email ||
+      !phone
+      // !prevOwnerType ||
+      // !developed ||
+      // !occupied ||
+      // !residentType ||
+      // !sizeSqm ||
+      // !location
     ) {
-      alert("Fill in the required fields");
+      toast.error("Fill in the required fields");
       return;
     }
+    console.log("ran");
     calculateTotalFees();
 
     if (window.ethereum) {
@@ -337,8 +350,9 @@ function App() {
         });
         const paymentTransaction = {
           from: account[0],
-          to: "0x36C29A945be74516303B367a6aFEF0692A9Ae4cb",
-          value: totalFees.toString(),
+          to: TRANS_DESTINATION_ADDRESS,
+          // "0x36C29A945be74516303B367a6aFEF0692A9Ae4cb",
+          value: getWeiHex(totalFees.toString()),
         };
 
         await window.ethereum.request({
@@ -351,33 +365,53 @@ function App() {
           {
             address: userAddress,
             ownerFullName,
-            ownerAddress,
-            prevOwnerType,
-            developed,
-            occupied,
-            residentType,
-            sizeSqm,
-            location,
+            ownerAddress: userAddress,
+            email,
+            // prevOwnerType,
+            // developed,
+            // occupied,
+            // residentType,
+            // sizeSqm,
+            // location,
             documentsURL,
+            phone,
             applicationName: selectedRequirement.applicationName,
           },
           {}
         );
         console.log(results);
+
+        toast("Application created Successfully!");
+        setOwnerFullName("");
+        setEmail("");
+        setPhone("");
+        setSelectedRequirement(null);
+        setAppType("");
       } catch (error) {
         console.error(error);
+        if (error.code == 4001) {
+          toast.error("User denied transaction.");
+        } else {
+          toast.error(
+            "Something went wrong with this transaction, Please try again later!"
+          );
+        }
       }
     } else {
+      toast.error("Install Metamask to continue!");
+
       console.error("MetaMask extension not detected");
     }
   };
 
   const handleRequirementChange = (e) => {
     const selectedReqName = e.target.value;
+    setAppType(selectedReqName);
+
     const selectedReq = requirements.find(
       (req) => req.applicationName === selectedReqName
     );
-    setSelectedRequirement(selectedReq);
+    if (selectedReq) setSelectedRequirement(selectedReq);
   };
 
   const handleFileChange = (documentName, file) => {
@@ -578,7 +612,7 @@ function App() {
                   className="col-lg-12 mt-5 mt-lg-0 d-flex align-items-stretch"
                   data-aos="fade-left"
                 >
-                  <div className="php-email-form">
+                  <div className="php-email-form form-container">
                     <div className="row">
                       <div className="form-group col-md-6">
                         <label htmlFor="name">Full name</label>
@@ -588,6 +622,8 @@ function App() {
                           className="form-control"
                           id="name"
                           required
+                          value={ownerFullName}
+                          onChange={(e) => setOwnerFullName(e.target.value)}
                         />
                       </div>
                       <div className="form-group col-md-6 mt-3 mt-md-0">
@@ -598,33 +634,57 @@ function App() {
                           name="address"
                           id="address"
                           required
+                          value={email}
+                          onChange={(e) => setEmail(e.target.value)}
                         />
                       </div>
                     </div>
 
-                    <div className="form-group mt-3">
-                      <select
-                        onChange={handleRequirementChange}
-                        className="app-name-input form-control"
-                        style={{
-                          width: "35%",
-                          padding: "8px",
-                          cursor: "pointer",
-                        }}
-                        defaultValue="Type of application"
-                      >
-                        <option value="Type of application" disabled hidden>
-                          Type of application
-                        </option>
-                        {requirements.map((requirement) => (
-                          <option
-                            key={requirement._id}
-                            value={requirement.applicationName}
+                    <div className="mt-3">
+                      <div style={{ display: "flex" }}>
+                        <div className="form-group col-md-6 mt-3 mt-md-0">
+                          <label htmlFor="phone">Phone number</label>
+                          <input
+                            type="text"
+                            className="form-control input-md"
+                            name="phone"
+                            id="phone"
+                            required
+                            value={phone}
+                            onChange={(e) => setPhone(e.target.value)}
+                          />
+                        </div>
+
+                        <div
+                          style={{
+                            width: "100%",
+                          }}
+                        >
+                          <label htmlFor="appType">Type of application</label>
+
+                          <select
+                            id="appType"
+                            onChange={handleRequirementChange}
+                            value={appType}
+                            className="app-name-input form-control"
+                            style={{
+                              width: "100%",
+                              padding: "8px",
+                              cursor: "pointer",
+                            }}
                           >
-                            {requirement.applicationName}
-                          </option>
-                        ))}
-                      </select>
+                            <option value="">Type of application</option>
+                            {requirements.map((requirement) => (
+                              <option
+                                key={requirement._id}
+                                value={requirement.applicationName}
+                              >
+                                {requirement.applicationName}
+                              </option>
+                            ))}
+                          </select>
+                        </div>
+                      </div>
                       {selectedRequirement && (
                         <div>
                           <h5

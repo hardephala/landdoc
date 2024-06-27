@@ -220,11 +220,11 @@ const Settings = ({ address }) => {
     "processing",
     "final assessment",
     "approved",
-    "approved",
     "pending payment",
     "payment confirmed",
     "final approval",
     "completed",
+    "document pickedup",
   ];
 
   return (
