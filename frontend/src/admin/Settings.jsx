@@ -218,6 +218,10 @@ const Settings = ({ address }) => {
   const allStatusTypes = [
     "pending",
     "processing",
+    "pending approval",
+    "e-signature",
+    "pending legal approval",
+    "collected",
     "final assessment",
     "approved",
     "pending payment",
@@ -311,7 +315,7 @@ const Settings = ({ address }) => {
                     required
                     style={{ marginBottom: "2px" }}
                   >
-                    <option value="">Select Role</option>
+                    <option value="">Select Status From</option>
                     {allStatusTypes.map((status) => (
                       <option key={status}>{status}</option>
                     ))}
@@ -328,7 +332,7 @@ const Settings = ({ address }) => {
                     required
                     style={{ marginBottom: "6px" }}
                   >
-                    <option value="">Select Role</option>
+                    <option value="">Select Status To</option>
                     {allStatusTypes.map((status) => (
                       <option key={status}>{status}</option>
                     ))}
@@ -415,11 +419,11 @@ const Settings = ({ address }) => {
                     <br />
 
                     {steps.map((step, index, array) => (
-                      <span key={index}>
+                      <p key={index}>
                         {`${step.role}: ${step.from} -> ${step.to}${
                           index < array.length - 1 ? ", " : ""
                         }`}
-                      </span>
+                      </p>
                     ))}
                   </>
                 )}
