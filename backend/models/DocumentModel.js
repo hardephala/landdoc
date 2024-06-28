@@ -1,9 +1,9 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
 const documentSchema = new mongoose.Schema({
   user: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'User',
+    ref: "User",
   },
   document: {
     type: String,
@@ -13,11 +13,11 @@ const documentSchema = new mongoose.Schema({
   },
   status: {
     type: String,
-    enum: ['Pending', 'Approved', 'ActionNeeded', 'Completed'],
-    default: 'Pending',
+    // enum: ['Pending', 'Approved', 'ActionNeeded', 'Completed'],
+    default: "Pending",
   },
 });
 
-const Document = mongoose.model('Document', documentSchema);
+const Document = mongoose.model("Document", documentSchema);
 
 module.exports = Document;
