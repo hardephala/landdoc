@@ -19,8 +19,8 @@ import "./assets/vendor/bootstrap-icons/bootstrap-icons.css";
 import "./assets/vendor/boxicons/css/boxicons.min.css";
 import "./assets/vendor/glightbox/css/glightbox.min.css";
 import "./assets/vendor/swiper/swiper-bundle.min.css";
-import Modal from "./Modal";
-import Apps from "./Apps";
+import Modal from "./components/Modal";
+import Apps from "./users/Apps";
 import toast from "react-hot-toast";
 
 function App() {
@@ -568,12 +568,32 @@ function App() {
                   that cannot be tampered with. Every record inserted into the
                   blockchain is immutable.
                 </h2>
-                <button
-                  className="btn-get-started scrollto"
-                  onClick={isConnected ? disconnectWallet : connectWallet}
-                >
-                  {isConnected ? "Disconnect Wallet" : "Connect Wallet"}
-                </button>
+
+                <div className="flex flex-wrap gap-2 mb-2">
+                  <button
+                    className="btn-get-started scrollto"
+                    onClick={isConnected ? disconnectWallet : connectWallet}
+                  >
+                    {isConnected ? "Disconnect Wallet" : "Connect Wallet"}
+                  </button>
+
+                  {isConnected && (
+                    <button
+                      className="btn-get-started scrollto !bg-slate-800"
+                      onClick={() => {
+                        window.scrollTo({
+                          top: 0,
+                          left: 0,
+                          behavior: "smooth",
+                        });
+                        setShowApps(true);
+                      }}
+                    >
+                      View Applications
+                    </button>
+                  )}
+                </div>
+
                 {isConnected && (
                   <div>
                     {userAddress}

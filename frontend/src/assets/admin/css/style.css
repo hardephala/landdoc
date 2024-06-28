@@ -20,7 +20,6 @@
 body {
   max-height: 100vh;
   overflow-x: scroll;
-
 }
 
 .container {
@@ -97,12 +96,11 @@ body {
   }
 }
 
-
 /* =============== Navigation ================ */
 .navigation {
   position: fixed;
-  top:0;
-  left:0;
+  top: 0;
+  left: 0;
   width: 300px;
   height: 100%;
   background: var(--blue);
@@ -402,6 +400,7 @@ body {
 .details .recentOrders table tr td:nth-child(3) {
   text-align: center;
 }
+/* update status */
 .status.delivered {
   padding: 2px 4px;
   background: #8de02c;
@@ -487,7 +486,6 @@ body {
     z-index: 100;
   }
   .navigation.active {
-    
     left: 0;
   }
   .main {
