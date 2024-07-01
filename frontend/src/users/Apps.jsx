@@ -103,7 +103,7 @@ const Apps = ({ address, setShowApps }) => {
                     <td>{application?._id}</td>
                     <td>{application?.appType?.applicationName}</td>
                     <td>
-                      <span className={`status ${application?.status}`}>
+                      <span className={`status pending ${application?.status.replace(" ", "-")}`}>
                         {application?.status}
                       </span>
                     </td>

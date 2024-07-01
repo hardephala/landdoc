@@ -293,9 +293,9 @@ const Application = ({ address, contract, userRole }) => {
                       handleDocumentStatusChange(file._id, e.target.value)
                     }
                   >
-                    {allStatusTypes.map((status) => (
-                      <option key={status}>{status}</option>
-                    ))}
+                    <option>pending</option>
+                    <option>action needed</option>
+                    <option>completed</option>
                   </select>
                 </label>
                 <br />

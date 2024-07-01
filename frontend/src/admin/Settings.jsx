@@ -552,6 +552,7 @@ const Settings = ({ address }) => {
                   <div key={index}>
                     {admin?.address?.substring(0, 7)}...
                     {admin?.address?.slice(-4)}
+                    ({admin?.role})
                     <button
                       className="btn-secondary btn"
                       onClick={() => handleAdminDelete(admin._id)}

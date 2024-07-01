@@ -7,6 +7,7 @@ const SingleApp = ({ application, address, onGoBack }) => {
   const [selectedApplication, setSelectedApplication] = useState({});
   const [documents, setDocuments] = useState({});
   const [documentsURL, setDocumentsURL] = useState({});
+  const [logs, setLogs] = useState([]);
 
   const [ownerFullName, setOwnerFullName] = useState("");
   const [ownerAddress, setOwnerAddress] = useState("");
@@ -35,8 +36,28 @@ const SingleApp = ({ application, address, onGoBack }) => {
         setResidentType(results.data.application.residentType);
         setSizeSqm(results.data.application.sizeSqm);
         setLocation(results.data.application.location);
-        setIsLoading(false);
 
+        setIsLoading(false);
+        const options = {
+          year: "numeric",
+          month: "long",
+          day: "numeric",
+          hour: "numeric",
+          minute: "numeric",
+          second: "numeric",
+          hour12: false,
+        };
+        const logsWithISOStrings = results.data.logs.map((log) => {
+          const isoDateString = new Date(log.date).toLocaleDateString(
+            undefined,
+            options
+          );
+          console.log(isoDateString);
+          return { ...log, date: isoDateString };
+        }).reverse();
+
+        setLogs(logsWithISOStrings);
+        console.log({logsWithISOStrings});
         console.log(results.data);
       } catch (err) {
         console.log(err);
@@ -185,6 +206,7 @@ const SingleApp = ({ application, address, onGoBack }) => {
           position: "absolute",
           top: "0",
           background: "#fff",
+          overflow:"auto"
         }}
       >
         <div className="text-center" style={{ marginTop: "40px" }}></div>
@@ -197,7 +219,7 @@ const SingleApp = ({ application, address, onGoBack }) => {
           Back
         </Link>
         <h3 className="text-center">
-          Application Type: <strong>{selectedApplication?.appType?.applicationName}</strong>
+          Application Type: <strong>{selectedApplication?.appType?.applicationName}</strong> 
         </h3>
         <br />
         <div className="row justify-content-center">
@@ -228,6 +250,14 @@ const SingleApp = ({ application, address, onGoBack }) => {
             </p>
           </div>
           <div className="col-md-6">
+            <p>
+              <strong>Application ID:</strong>{" "}
+              <input
+                defaultValue={selectedApplication?._id}
+                readOnly
+                className="col-md-4 form-control"
+                />
+            </p>
             <p>
               <strong>Email Address:</strong>{" "}
               <input
@@ -317,14 +347,46 @@ const SingleApp = ({ application, address, onGoBack }) => {
             )}
           </ul>
 
-          <button
+          {/* <button
             onClick={handleUpdateApplication}
             className="btn btn-primary col-md-6 justify-content-center form-control"
           >
             Update Application
-          </button>
+          </button> */}
+           <div>
+          <div style={{ height: "20px" }}></div>
+          <div className="cardHeader">
+            <h2>Logs</h2>
+          </div>
+          <table
+            className="table table-striped table-hover table-bordered"
+            style={{ width: "100%" }}
+          >
+            <thead>
+              <tr>
+                <td>Date</td>
+                <td>Data</td>
+                <td>Admin</td>
+              </tr>
+            </thead>
+            <tbody>
+              {logs.map((log, index) => (
+                <tr key={index}>
+                  <td>{log?.date}</td>
+                  <td>{log?.data}</td>
+                  <td>
+                    {log?.adminId?.address.substring(0, 5)}...
+                    {log?.adminId?.address.slice(-3)}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
         </div>
       </div>
+
+     
     </>
   );
 };

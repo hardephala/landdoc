@@ -39,6 +39,7 @@ const {
   createAdminRoles,
   getAllAdminRoles,
   deleteAdminRoles,
+  setupAdmin
 } = require("../controllers/adminController.js");
 const {
   validateRequirement,
@@ -92,8 +93,10 @@ router.get("/applications/:appId/documents/:docId", getDocument);
 router.put("/documents/:documentId/status", updateDocumentStatus);
 
 // admin role
+router.get("/admin/whoami/setup", setupAdmin)
 router.post("/admin/roles", validateAdminRoles, createAdminRoles);
 router.delete("/admin/roles", validateAdminRoles, deleteAdminRoles);
 router.get("/admin/roles", getAllAdminRoles);
+
 
 module.exports = router;

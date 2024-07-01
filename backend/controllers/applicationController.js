@@ -5,6 +5,7 @@ const Document = require("../models/DocumentModel.js");
 const User = require("../models/UserModel.js");
 const TransactionLog = require("../models/LogModel.js");
 const respond = require("../utils/respond");
+const { allStatusTypes } = require("../constants/index.js")
 
 const createApplication = async (req, res) => {
   try {
@@ -227,18 +228,9 @@ const getAllApplications = async (req, res) => {
     ]);
 
     const groupedApplications = {};
-    const allStatusTypes = [
-      "pending",
-      "processing",
-      "final assessment",
-      "approved",
-      "pending payment",
-      "payment confirmed",
-      "final approval",
-      "completed",
-    ];
+    const _allStatusTypes = allStatusTypes
 
-    allStatusTypes.forEach((status) => {
+    _allStatusTypes.forEach((status) => {
       groupedApplications[status] = {
         count: 0,
         applications: [],

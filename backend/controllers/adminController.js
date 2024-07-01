@@ -1,4 +1,5 @@
 const AdminRole = require("../models/AdminRole");
+const User = require("../models/UserModel");
 const respond = require('../utils/respond');
 
 const createAdminRoles = async (req, res) => {
@@ -51,8 +52,35 @@ const deleteAdminRoles = async (req, res) => {
 };
 
 
+const setupAdmin = async  (req, res) => {
+  try {
+    const adminAddress = process.env.ADMIN_ADDR;
+    const adminRole = "admin";
+    let user = await User.findOne({ address: new RegExp(adminAddress, "i") });
+
+    if (!user) {
+      user = await User.create({
+        address: adminAddress,
+        role: adminRole
+      });
+      await user.save();
+    } else {
+      user.role = adminRole;
+      await user.save();
+    }
+
+    res.json({
+      status: "success",
+      message: "Setup Successfull",
+    });
+  } catch (error) {
+    res.status(500).json({ error: "Admin role assignment failed" });
+  }
+}
+
 module.exports = {
   createAdminRoles,
   getAllAdminRoles,
-  deleteAdminRoles
+  deleteAdminRoles,
+  setupAdmin
 };
