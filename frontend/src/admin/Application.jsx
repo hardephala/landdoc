@@ -7,8 +7,10 @@ import { ethers } from "ethers";
 import customer1 from "../assets/admin/imgs/customer01.jpg";
 import "../assets/admin/vendor/bootstrap/css/bootstrap.min.css";
 import "../assets/admin/css/style.css";
+import { allStatusTypes } from "../constants";
+import toast from "react-hot-toast";
 
-const Application = ({ address, contract }) => {
+const Application = ({ address, contract, userRole }) => {
   const { applicationId } = useParams();
   const [application, setApplication] = useState();
   const [logs, setLogs] = useState([]);
@@ -89,23 +91,27 @@ const Application = ({ address, contract }) => {
     }
   };
 
+  const [loading, setLoading] = useState(false);
+
   const handleUpdateStatus = async () => {
     try {
+      setLoading(true);
       if (status === "Completed") {
         storeHashOnChain(completedDocURL.hash, completedDocURL.url);
 
         await axios.put(
-          `http://localhost:4000/api/applications/completed/${applicationId}`,
-          { address, completedDocURL },
+          // `http://localhost:4000/api/applications/completed/${applicationId}`,
+          `http://localhost:4000/api/applications/status/${applicationId}`,
+          { status, comments, address, completedDocURL },
+          {}
+        );
+      } else {
+        await axios.put(
+          `http://localhost:4000/api/applications/status/${applicationId}`,
+          { status, comments, address },
           {}
         );
       }
-
-      await axios.put(
-        `http://localhost:4000/api/applications/status/${applicationId}`,
-        { status, comments, address },
-        {}
-      );
 
       await Promise.all(
         Object.entries(documentStatuses).map(([documentId, documentStatus]) =>
@@ -116,8 +122,12 @@ const Application = ({ address, contract }) => {
           )
         )
       );
+      toast.success("Application Status Updated Successfully");
+      navigate(-1);
     } catch (err) {
       console.log(err);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -155,6 +165,23 @@ const Application = ({ address, contract }) => {
       console.log(err);
     }
   };
+
+  const getStatusDisabled = (status) => {
+    if (!application) return true;
+    const requiredSteps = application.appType.requiredSteps;
+    let allowedSteps = requiredSteps.filter((step) => step.role === userRole);
+
+    if (userRole === "admin") {
+      return false;
+    }
+    const allowed = allowedSteps
+      .map((steps) => steps.from == status || steps.to == status)
+      .some((step) => step === true);
+
+    return !allowed;
+  };
+
+  // console.log({ application });
 
   return (
     <>
@@ -202,14 +229,15 @@ const Application = ({ address, contract }) => {
               onChange={(e) => setStatus(e.target.value)}
               className="col-md-3 form-control"
             >
-              <option value="Pending">Pending</option>
-              <option value="Approved">Approved</option>
-              <option value="ActionNeeded">Action Needed</option>
-              <option value="Completed">Completed</option>
+              {allStatusTypes.map((status) => (
+                <option key={status} disabled={getStatusDisabled(status)}>
+                  {status}
+                </option>
+              ))}
             </select>
           </label>
           <br />
-          {status === "Completed" && (
+          {status === "completed" && (
             <label>
               <strong>Completed Document : </strong>
               <input
@@ -276,10 +304,9 @@ const Application = ({ address, contract }) => {
                       handleDocumentStatusChange(file._id, e.target.value)
                     }
                   >
-                    <option value="Pending">Pending</option>
-                    <option value="Approved">Approved</option>
-                    <option value="ActionNeeded">Action Needed</option>
-                    <option value="Completed">Completed</option>
+                    {allStatusTypes.map((status) => (
+                      <option key={status}>{status}</option>
+                    ))}
                   </select>
                 </label>
                 <br />
@@ -289,7 +316,8 @@ const Application = ({ address, contract }) => {
 
           <button
             onClick={handleUpdateStatus}
-            className="btn btn-primary form-control col-md-6"
+            className="btn btn-primary form-control col-md-6 mx-2"
+            disabled={loading}
           >
             Update Status
           </button>

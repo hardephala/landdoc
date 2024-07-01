@@ -6,6 +6,7 @@ import { getAllRoles } from "../services/apis";
 import "../assets/admin/vendor/bootstrap/css/bootstrap.min.css";
 import "../assets/admin/css/style.css";
 import toast from "react-hot-toast";
+import { allStatusTypes } from "../constants";
 
 const defaultStep = {
   from: "",
@@ -214,18 +215,6 @@ const Settings = ({ address }) => {
       console.error("Error removing admin:", error);
     }
   };
-
-  const allStatusTypes = [
-    "pending",
-    "processing",
-    "final assessment",
-    "approved",
-    "pending payment",
-    "payment confirmed",
-    "final approval",
-    "completed",
-    "document pickedup",
-  ];
 
   return (
     <div className="container">
