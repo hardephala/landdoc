@@ -440,6 +440,8 @@ function App() {
     }
   }, [isConnected, userRole, allApplications, isAdminLoaded, isAdmin]);
 
+  console.log({ userRole });
+
   if (isAdminLoaded && isAdmin) {
     return (
       <div className="container-fluid">
@@ -450,12 +452,18 @@ function App() {
             <Route path="/" element={<Recent address={userAddress} />} />
             <Route
               path="/applications"
-              element={<Applications address={userAddress} />}
+              element={
+                <Applications address={userAddress} userRole={userRole} />
+              }
             />
             <Route
               path="/application/:applicationId"
               element={
-                <Application address={userAddress} contract={contract} />
+                <Application
+                  address={userAddress}
+                  contract={contract}
+                  userRole={userRole}
+                />
               }
             />
             <Route
