@@ -38,14 +38,14 @@ const {
 const {
   createAdminRoles,
   getAllAdminRoles,
-  deleteAdminRoles
+  deleteAdminRoles,
 } = require("../controllers/adminController.js");
 const {
   validateRequirement,
 } = require("../utils/validators/requirement.validator.js");
 
 const {
-  validateAdminRoles
+  validateAdminRoles,
 } = require("../utils/validators/admin.validator.js");
 
 // User Routes
@@ -95,6 +95,5 @@ router.put("/documents/:documentId/status", updateDocumentStatus);
 router.post("/admin/roles", validateAdminRoles, createAdminRoles);
 router.delete("/admin/roles", validateAdminRoles, deleteAdminRoles);
 router.get("/admin/roles", getAllAdminRoles);
-
 
 module.exports = router;

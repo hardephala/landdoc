@@ -62,7 +62,6 @@ app.listen(port, () => {
   console.log(`serve at http://localhost:${port}`);
 });
 
-
 // (async () => {
 
 // const roles = ['admin','IntakeOfficer','SchemeOfficer','ExecutiveSecretary','Account','Legal','PermanentSecretary','Commissioner','Registry','Collection']
@@ -80,11 +79,11 @@ app.listen(port, () => {
 // (async () => {
 // const user = await User.findOneAndUpdate({
 //   address: '0x41ba5d2a8efe1a9bc127d7819276f8a0695127cb',
-  
+
 // }, {
 //   role: 'admin'
 // }, {
-//   new: true, 
+//   new: true,
 
 // })
 

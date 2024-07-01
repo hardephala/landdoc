@@ -410,13 +410,22 @@ const getDocumentsForApplication = async (req, res) => {
 
 const updateApplicationStatus = async (req, res) => {
   try {
-    const { status, comments, address } = req.body;
+    const { status, comments, address, completedDocURL } = req.body;
     const { appId } = req.params;
 
-    const application = await Application.findByIdAndUpdate(appId, {
+    const updates = {
       status,
       comments,
-    });
+    };
+
+    if (status === "completed") {
+      const { hash, url } = completedDocURL;
+
+      updates.completedHash = hash;
+      updates.completedDocURL = url;
+    }
+
+    const application = await Application.findByIdAndUpdate(appId, updates);
 
     const user = await User.findOne({ address: new RegExp(address, "i") });
 
@@ -427,12 +436,6 @@ const updateApplicationStatus = async (req, res) => {
     });
 
     await transactionLog.save();
-
-    // res.status(200).json({
-    //   success: true,
-    //   message: "Application status updated successfully",
-    //   application,
-    // });
 
     respond(res, 200, "Application status updated successfully", application);
   } catch (error) {
@@ -449,7 +452,16 @@ const completeApplication = async (req, res) => {
       completedHash: hash,
       completedDocURL: url,
     });
-    console.log(application);
+
+    const user = await User.findOne({ address: new RegExp(address, "i") });
+
+    const transactionLog = new TransactionLog({
+      appId: application._id,
+      data: `Application status updated - ${comments}`,
+      adminId: user._id,
+    });
+
+    await transactionLog.save();
 
     res.status(200).json({
       success: true,
