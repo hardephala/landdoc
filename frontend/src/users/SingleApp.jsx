@@ -11,8 +11,8 @@ const SingleApp = ({ application, address, onGoBack }) => {
   const [ownerFullName, setOwnerFullName] = useState("");
   const [ownerAddress, setOwnerAddress] = useState("");
   const [prevOwnerType, setPrevOwnerType] = useState("");
-  const [developed, setDeveloped] = useState("");
-  const [occupied, setOccupied] = useState("");
+  const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
   const [residentType, setResidentType] = useState("");
   const [sizeSqm, setSizeSqm] = useState("");
   const [location, setLocation] = useState("");
@@ -30,8 +30,8 @@ const SingleApp = ({ application, address, onGoBack }) => {
         setOwnerFullName(results.data.application.ownerFullName);
         setOwnerAddress(results.data.application.ownerAddress);
         setPrevOwnerType(results.data.application.prevOwnerType);
-        setDeveloped(results.data.application.developed);
-        setOccupied(results.data.application.occupied);
+        setEmail(results.data.application.email);
+        setPhone(results.data.application.phone);
         setResidentType(results.data.application.residentType);
         setSizeSqm(results.data.application.sizeSqm);
         setLocation(results.data.application.location);
@@ -85,8 +85,8 @@ const SingleApp = ({ application, address, onGoBack }) => {
           ownerFullName,
           ownerAddress,
           prevOwnerType,
-          developed,
-          occupied,
+          email,
+          phone,
           residentType,
           sizeSqm,
           location,
@@ -197,13 +197,13 @@ const SingleApp = ({ application, address, onGoBack }) => {
           Back
         </Link>
         <h3 className="text-center">
-          <strong>{selectedApplication?.appType?.applicationName}</strong>
+          Application Type: <strong>{selectedApplication?.appType?.applicationName}</strong>
         </h3>
         <br />
         <div className="row justify-content-center">
           <div className="col-md-6">
             <p>
-              <strong>Owner's Full Name:</strong>{" "}
+              <strong>Applicant's Full Name:</strong>{" "}
               <input
                 onChange={(e) => setOwnerFullName(e.target.value)}
                 defaultValue={ownerFullName}
@@ -211,68 +211,10 @@ const SingleApp = ({ application, address, onGoBack }) => {
               />
             </p>
             <p>
-              <strong>Owner's Address:</strong>{" "}
+              <strong>Applicant Wallet Address:</strong>{" "}
               <input
                 onChange={(e) => setOwnerAddress(e.target.value)}
                 defaultValue={ownerAddress}
-                className="col-md-4 form-control"
-              />
-            </p>
-            <p>
-              <strong>Previous Owner Type:</strong>{" "}
-              <input
-                onChange={(e) => setPrevOwnerType(e.target.value)}
-                defaultValue={prevOwnerType}
-                className="col-md-4 form-control"
-              />
-            </p>
-            <strong>Developed</strong>
-            <select
-              className="col-md-3 form-control"
-              name="developed"
-              id="developed"
-              defaultValue={developed}
-              onChange={(e) => setDeveloped(e.target.value)}
-              required
-            >
-              <option value="true">Yes</option>
-              <option value="false">No</option>
-            </select>
-            <strong>Occupied</strong>
-            <select
-              className="col-md-3 form-control"
-              name="developed"
-              id="occupied"
-              defaultValue={occupied}
-              onChange={(e) => setOccupied(e.target.value)}
-              required
-            >
-              <option value="true">Yes</option>
-              <option value="false">No</option>
-            </select>
-          </div>
-          <div className="col-md-6">
-            <p>
-              <strong>Resident Type:</strong>{" "}
-              <input
-                defaultValue={residentType}
-                onChange={(e) => setResidentType(e.target.value)}
-                className="col-md-4 form-control"
-              />
-            </p>
-            <p>
-              <strong>Size (Sqm):</strong>{" "}
-              <input
-                defaultValue={sizeSqm}
-                onChange={(e) => setSizeSqm(e.target.value)}
-                className="col-md-4 form-control"
-              />
-            </p>
-            <p>
-              <strong>Location:</strong>{" "}
-              <input
-                defaultValue={location}
-                onChange={(e) => setLocation(e.target.value)}
                 className="col-md-4 form-control"
               />
             </p>
@@ -284,6 +226,26 @@ const SingleApp = ({ application, address, onGoBack }) => {
                 disabled
               />
             </p>
+          </div>
+          <div className="col-md-6">
+            <p>
+              <strong>Email Address:</strong>{" "}
+              <input
+                defaultValue={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="col-md-4 form-control"
+              />
+            </p>
+            <p>
+              <strong>Phone Number:</strong>{" "}
+              <input
+                defaultValue={phone}
+                onChange={(e) => setPhone(e.target.value)}
+                className="col-md-4 form-control"
+              />
+            </p>
+            
+            
             {selectedApplication?.completedDocURL && (
               <p>
                 {`Completed ${application?.appType?.applicationName} Document`}{" "}
@@ -331,8 +293,10 @@ const SingleApp = ({ application, address, onGoBack }) => {
                       </a>
                     )}
                   </div>
+                  <br/>
+                    <hr/>
 
-                  <input
+                  {/* <input
                     type="file"
                     onChange={(e) =>
                       handleFileChange(file.document, e.target.files[0])
@@ -345,7 +309,9 @@ const SingleApp = ({ application, address, onGoBack }) => {
                     onClick={() => handleDocumentUpload(file.document)}
                   >
                     Upload
-                  </button>
+                  </button> */}
+
+
                 </div>
               )
             )}

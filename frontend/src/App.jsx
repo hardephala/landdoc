@@ -538,7 +538,7 @@ function App() {
                     } else alert("Wallet not connected");
                   }}
                 >
-                  Applications
+                  Applicationss
                 </a>
               </li>
             </ul>

@@ -194,48 +194,33 @@ const Application = ({ address, contract, userRole }) => {
         <div className="row">
           <div className="col-md-6">
             <p>
-              <strong>Owner's Full Name :</strong> {application?.ownerFullName}
+              <strong>Applicant's Full Name :</strong>{" "}
+              {application?.ownerFullName}
             </p>
             <p>
-              <strong>Owner's Address :</strong> {application?.ownerAddress}
+              <strong>Applicant's Address :</strong> {application?.ownerAddress}
             </p>
             <p>
-              <strong>Previous Owner Type :</strong>{" "}
-              {application?.prevOwnerType}
-            </p>
-            <p>
-              <strong>Developed :</strong>{" "}
-              {application?.developed ? "Yes" : "No"}
+              <strong>Email Address :</strong> {application?.email}
             </p>
           </div>
           <div className="col-md-6">
-            <p>
-              <strong>Resident Type :</strong> {application?.residentType}
-            </p>
-            <p>
-              <strong>Size (Sqm) :</strong> {application?.sizeSqm}
-            </p>
-            <p>
-              <strong>Location :</strong> {application?.location}
-            </p>
-            <p>
-              <strong>Occupied :</strong> {application?.occupied ? "Yes" : "No"}
-            </p>
+            <label>
+              <strong>Application status :</strong> {application?.status}
+              <select
+                value={status}
+                onChange={(e) => setStatus(e.target.value)}
+                className="form-control"
+              >
+                {allStatusTypes.map((status) => (
+                  <option key={status} disabled={getStatusDisabled(status)}>
+                    {status}
+                  </option>
+                ))}
+              </select>
+            </label>
           </div>
-          <label>
-            <strong>Application status :</strong> {application?.status}
-            <select
-              value={status}
-              onChange={(e) => setStatus(e.target.value)}
-              className="col-md-3 form-control"
-            >
-              {allStatusTypes.map((status) => (
-                <option key={status} disabled={getStatusDisabled(status)}>
-                  {status}
-                </option>
-              ))}
-            </select>
-          </label>
+
           <br />
           {status === "completed" && (
             <label>
