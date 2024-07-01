@@ -175,7 +175,11 @@ const Application = ({ address, contract, userRole }) => {
       return false;
     }
     const allowed = allowedSteps
-      .map((steps) => steps.from == status || steps.to == status)
+      .map(
+        (steps) =>
+          steps.from == application.status &&
+          (steps.to == status || steps.from == status)
+      )
       .some((step) => step === true);
 
     return !allowed;
