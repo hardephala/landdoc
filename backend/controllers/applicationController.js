@@ -143,7 +143,7 @@ const updateApplication = async (req, res) => {
     // application.status = "Pending";
     const transactionLog = new TransactionLog({
       appId: application._id,
-      data: "Application updated by user",
+      data: `Application status updated to ${application.status}`,
     });
 
     await transactionLog.save();
@@ -152,7 +152,7 @@ const updateApplication = async (req, res) => {
     await application.save();
 
     // res.json({ status: "success", message: "Saved successfully" });
-    respond(res, 200, "Saved successfully", application);
+    respond(res, 200, "Saved successfully. Refresh to see updates", application);
   } catch (error) {
     console.log(error);
     res.json({ status: "error", message: "Could not be saved" });
@@ -334,7 +334,7 @@ const approveApplication = async (req, res) => {
     application.status = "Approved";
     await application.save();
 
-    res.json({ message: "Application approved" });
+    res.json({ message: "Application approved. Refresh to see updates" });
   } catch (error) {
     res.status(500).json({ error: "Approval failed" });
   }
@@ -352,7 +352,7 @@ const rejectApplication = async (req, res) => {
     application.status = "Rejected";
     await application.save();
 
-    res.json({ message: "Application rejected" });
+    res.json({ message: "Application rejected. Refresh to see updates" });
   } catch (error) {
     res.status(500).json({ error: "Rejection failed" });
   }
@@ -423,13 +423,13 @@ const updateApplicationStatus = async (req, res) => {
 
     const transactionLog = new TransactionLog({
       appId: application._id,
-      data: `Application status updated - ${comments}`,
+      data: `Application status updated to ${status} - ${comments}`,
       adminId: user._id,
     });
 
     await transactionLog.save();
 
-    respond(res, 200, "Application status updated successfully", application);
+    respond(res, 200, "Application status updated successfully. Refresh to see updates", application);
   } catch (error) {
     res.status(500).json({ error: "Failed to update application status" });
   }
